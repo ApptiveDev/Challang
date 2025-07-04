@@ -1,5 +1,6 @@
 package com.stellan.challang.ui.screen.home
 
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +12,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -22,6 +26,7 @@ import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -29,12 +34,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.stellan.challang.rememberRecentSearches
+import com.stellan.challang.saveSearchQuery
 import com.stellan.challang.ui.theme.PaperlogyFamily
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -42,6 +50,8 @@ import com.stellan.challang.ui.theme.PaperlogyFamily
 fun CuratingScreen() {
     var text by rememberSaveable { mutableStateOf("") }
     var expanded by rememberSaveable { mutableStateOf(false) }
+
+    val recentSearches by rememberRecentSearches()
 
     Box(Modifier
         .fillMaxSize()
@@ -66,7 +76,7 @@ fun CuratingScreen() {
             colors = SearchBarDefaults.colors(
                 containerColor = if (expanded) Color.White else Color(0xFFCEEFF2)
             ),
-            shape = RoundedCornerShape(8.dp),
+            shape = RoundedCornerShape(12.dp),
         ) {
             Column(modifier = Modifier
                 .fillMaxWidth()
@@ -79,11 +89,17 @@ fun CuratingScreen() {
                 LazyRow(
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    items(4) { iter ->
+                    items(recentSearches) { q ->
                         SuggestionChip(
-                            onClick = {},
+                            onClick = {
+                                text = q
+                                expanded = false
+                                LaunchedEffect(q) {
+                                    saveSearchQuery(LocalContext.current, q)
+                                }
+                            },
                             label = { Text(
-                                "사랑해",
+                                text = q,
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(horizontal = 5.dp),
@@ -108,7 +124,7 @@ fun CuratingScreen() {
                 LazyRow(
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    items(4) { iter ->
+                    items(6) { iter ->
                         SuggestionChip(
                             onClick = {},
                             label = { Text(
@@ -133,6 +149,31 @@ fun CuratingScreen() {
                     fontFamily = PaperlogyFamily,
                     fontWeight = FontWeight.SemiBold,
                 )
+                Spacer(modifier = Modifier.height(10.dp))
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    items(8) { iter ->
+                        SuggestionChip(
+                            onClick = {},
+                            label = { Text(
+                                "사랑해",
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 5.dp),
+                                textAlign = TextAlign.Center
+                            ) },
+                            border = SuggestionChipDefaults.suggestionChipBorder(
+                                enabled = true,
+                                borderColor = Color.Transparent
+                            ),
+                            colors = SuggestionChipDefaults.suggestionChipColors(
+                                containerColor = Color(0xFFCEEFF2)
+                            )
+                        )
+                    }
+                }
             }
         }
 
