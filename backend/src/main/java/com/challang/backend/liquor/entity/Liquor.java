@@ -49,11 +49,11 @@ public class Liquor extends BaseEntity {
 
     @Column(name = "average_rating")
     @ColumnDefault("0.0")
-    private Double averageRating;
+    private Double averageRating = 0.0;
 
     @Column(name = "review_count")
     @ColumnDefault("0")
-    private Integer reviewCount;
+    private Integer reviewCount = 0;
 
     public void updateAverageRating(Double newAverageRating, Integer newReviewCount) {
         this.averageRating = newAverageRating;
@@ -97,6 +97,24 @@ public class Liquor extends BaseEntity {
         }
         if (type != null) {
             this.type = type;
+        }
+    }
+
+    public void handleReviewCreation(double newRating) {
+        double totalRating = (this.averageRating * this.reviewCount) + newRating;
+        this.reviewCount++;
+        this.averageRating = totalRating / this.reviewCount;
+    }
+
+    public void handleReviewDeletion(double deletedRating) {
+        // 리뷰가 하나뿐이었을 경우, 0으로 초기화하여 0으로 나누는 오류 방지
+        if (this.reviewCount <= 1) {
+            this.reviewCount = 0;
+            this.averageRating = 0.0;
+        } else {
+            double totalRating = (this.averageRating * this.reviewCount) - deletedRating;
+            this.reviewCount--;
+            this.averageRating = totalRating / this.reviewCount;
         }
     }
 }

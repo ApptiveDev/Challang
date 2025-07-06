@@ -3,11 +3,10 @@ package com.challang.backend.user.entity;
 import com.challang.backend.user.converter.UserRoleConverter;
 import com.challang.backend.util.entity.BaseEntity;
 import jakarta.persistence.*;
-import jakarta.persistence.GenerationType;
-import java.time.LocalDate;
-import lombok.AccessLevel;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
+
+import java.time.LocalDate;
 
 
 @Getter
@@ -50,11 +49,12 @@ public class User extends BaseEntity {
     private AuthType authType;
 
     @Builder(access = AccessLevel.PRIVATE)
-    private User(String email, String password, String oauthId, LocalDate birthDate, Integer gender,
+    private User(String email, String password, String oauthId, String nickname, LocalDate birthDate, Integer gender,
                  UserRole role, AuthType authType) {
         this.email = email;
         this.password = password;
         this.oauthId = oauthId;
+        this.nickname = nickname;
         this.birthDate = birthDate;
         this.gender = gender;
         this.role = role;
@@ -62,11 +62,12 @@ public class User extends BaseEntity {
     }
 
     // 이메일 회원가입 시 사용
-    public static User createWithEmail(String email, String password, LocalDate birthDate, Integer gender,
+    public static User createWithEmail(String email, String password, String nickname, LocalDate birthDate, Integer gender,
                                        UserRole role) {
         return User.builder()
                 .email(email)
                 .password(password)
+                .nickname(nickname)
                 .birthDate(birthDate)
                 .gender(gender)
                 .role(role)
@@ -75,9 +76,10 @@ public class User extends BaseEntity {
     }
 
     // 카카오 회원가입 시 사용
-    public static User createWithOauth(String oauthId, LocalDate birthDate, Integer gender, UserRole role) {
+    public static User createWithOauth(String oauthId, String nickname, LocalDate birthDate, Integer gender, UserRole role) {
         return User.builder()
                 .oauthId(oauthId)
+                .nickname(nickname)
                 .birthDate(birthDate)
                 .gender(gender)
                 .role(role)

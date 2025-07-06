@@ -40,15 +40,19 @@ public class Review extends BaseEntity {
     private Double rating;
 
     @Column(name = "like_count")
+    @Builder.Default
     private Integer likeCount = 0;
 
     @Column(name = "dislike_count")
+    @Builder.Default
     private Integer dislikeCount = 0;
 
     @Column(name = "report_count")
+    @Builder.Default
     private Integer reportCount = 0;
 
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<ReviewTag> reviewTags = new ArrayList<>();
 
     public void update(ReviewUpdateRequestDto request, List<ReviewTag> newTags) {
@@ -65,16 +69,29 @@ public class Review extends BaseEntity {
     }
 
     public void increaseReactionCount(ReactionType reactionType) {
-        if (reactionType == ReactionType.LIKE) this.likeCount++;
-        else this.dislikeCount++;
+        if (reactionType == ReactionType.LIKE) {
+            if (this.likeCount == null) this.likeCount = 0;
+            this.likeCount++;
+        } else {
+            if (this.dislikeCount == null) this.dislikeCount = 0;
+            this.dislikeCount++;
+        }
     }
 
     public void decreaseReactionCount(ReactionType reactionType) {
-        if (reactionType == ReactionType.LIKE) this.likeCount--;
-        else this.dislikeCount--;
+        if (reactionType == ReactionType.LIKE) {
+            if (this.likeCount == null) this.likeCount = 0;
+            this.likeCount--;
+        } else {
+            if (this.dislikeCount == null) this.dislikeCount = 0;
+            this.dislikeCount--;
+        }
     }
 
     public void increaseReportCount() {
+        if (this.reportCount == null) {
+            this.reportCount = 0;
+        }
         this.reportCount++;
     }
 
@@ -85,5 +102,12 @@ public class Review extends BaseEntity {
 
     public void addTags(List<ReviewTag> reviewTags) {
         this.reviewTags.addAll(reviewTags);
+    }
+
+    @PreRemove
+    private void preRemove() {
+        if (liquor != null) {
+            liquor.handleReviewDeletion(this.rating);
+        }
     }
 }

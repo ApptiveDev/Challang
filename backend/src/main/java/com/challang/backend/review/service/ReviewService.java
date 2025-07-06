@@ -154,7 +154,7 @@ public class ReviewService {
     }
 
     @Transactional
-    public void reportReview(Long reviewId, ReportRequestDto request, User user) {
+    public void reportReview(Long reviewId, User user) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new BaseException(ReviewErrorCode.REVIEW_NOT_FOUND));
 
@@ -167,7 +167,7 @@ public class ReviewService {
         ReviewReport report = ReviewReport.builder()
                 .user(user)
                 .review(review)
-                .reason(request.reason())
+//                .reason(request.reason())
                 .build();
         reviewReportRepository.save(report);
 
@@ -227,7 +227,7 @@ public class ReviewService {
     }
 
     private void validateTagCount(List<Long> tagIds) {
-        // 태그 목록이 null이 아니고, 리스트의 크기가 3보다 크면 예외 발생
+        // 태그 목록이 비었거나 리스트의 크기가 3보다 크면 예외 발생
         if (tagIds != null && tagIds.size() > 3) {
             throw new BaseException(ReviewErrorCode.MAX_TAGS_EXCEEDED);
         }

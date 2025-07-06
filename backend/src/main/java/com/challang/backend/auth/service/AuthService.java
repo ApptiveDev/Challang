@@ -9,6 +9,7 @@ import com.challang.backend.global.util.RedisUtil;
 import com.challang.backend.user.entity.User;
 import com.challang.backend.user.exception.UserErrorCode;
 import com.challang.backend.user.repository.UserRepository;
+import com.challang.backend.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +40,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
     private final RedisUtil redisUtil;
+    private final UserService userService;
 
     @Value("${jwt.refresh-expired-time}")
     private long refreshExpiredSeconds;
@@ -57,6 +59,7 @@ public class AuthService {
         User user = User.createWithEmail(
                 dto.email(),
                 encodedPassword,
+                dto.nickname(),
                 dto.birthDate(),
                 dto.gender(),
                 dto.role()
@@ -101,6 +104,7 @@ public class AuthService {
 
         User user = User.createWithOauth(
                 oauthId,
+                dto.nickname(),
                 dto.birthDate(),
                 dto.gender(),
                 dto.role()
@@ -156,7 +160,7 @@ public class AuthService {
 
         // 새 리프레시 토큰 저장
         String newJti = jwtUtil.getJti(newRefresh);
-        redisUtil.setDataExpire(newJti, userId.toString(), refreshExpiredSeconds);
+        redisUtil.setDataExpire(newJti, newRefresh, refreshExpiredSeconds);
 
         return new TokenResponse(newAccess, newRefresh);
     }
@@ -179,8 +183,6 @@ public class AuthService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new BaseException(UserErrorCode.USER_NOT_FOUND));
 
-        // TODO: 관련 데이터 모두 삭제
-
         try {
             String jti = jwtUtil.getJti(refreshToken);
             redisUtil.deleteData(jti);
@@ -188,7 +190,7 @@ public class AuthService {
             log.warn("유저 삭제 중 토큰 제거 실패: {}", e.getMessage());
         }
 
-        userRepository.delete(user);
+        userService.deleteUser(id);
     }
 
 

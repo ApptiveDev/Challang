@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity; // ✨ import 추가
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -21,6 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -35,6 +37,14 @@ public class SecurityConfig {
             "/api/auth/email/**",
             "/api/auth/kakao/**",
             "/api/auth/refresh-token"
+    };
+
+    // Swagger 관련 경로 추가
+    private static final String[] SWAGGER_WHITELIST = {
+            "/swagger-ui.html",
+            "/swagger-ui/**",
+            "/v3/api-docs/**",
+            "/swagger-resources/**"
     };
 
     // 비밀번호 암호화
@@ -68,17 +78,17 @@ public class SecurityConfig {
 
                 // HTTP 요청에 대한 인가 규칙 설정
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll()  //TODO: 개발 단계에서는 모두 경로 허용
-//                        .requestMatchers(AUTH_WHITELIST).permitAll()
-//                        .requestMatchers("/error").permitAll()
-//                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-//                        .requestMatchers("/api/**").hasAnyRole("USER", "ADMIN")
-//                        .anyRequest().authenticated() // 그 외 요청은 인증 필요
+                        .requestMatchers(AUTH_WHITELIST).permitAll()
+                        .requestMatchers(SWAGGER_WHITELIST).permitAll()
+                        .requestMatchers("/error").permitAll()
+                        // .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        // .requestMatchers("/api/**").hasAnyRole("USER", "ADMIN")
+                        .anyRequest().authenticated()
                 )
 
-        // JWT 인증 필터 등록
+                // JWT 인증 필터 등록
                 .addFilterBefore(new JwtAuthenticationFilter(jwtUtil, redisUtil, customUserDetailsService),
-                UsernamePasswordAuthenticationFilter.class);
+                        UsernamePasswordAuthenticationFilter.class);
 
         return httpSecurity.build();
     }

@@ -13,8 +13,9 @@ public record ReviewResponseDto(
         String imageUrl,
         LocalDateTime createdAt,
         Double rating,
-        int likeCount,
-        int dislikeCount,
+        Integer likeCount,
+        Integer dislikeCount,
+        Integer reportCount,
         List<String> hashtags
 ) {
     public static ReviewResponseDto from(Review review, String s3BaseUrl) {
@@ -34,6 +35,7 @@ public record ReviewResponseDto(
                 review.getRating(),
                 review.getLikeCount() != null ? review.getLikeCount() : 0,
                 review.getDislikeCount() != null ? review.getDislikeCount() : 0,
+                review.getReportCount() != null ? review.getReportCount() : 0,
                 tagNames
         );
     }

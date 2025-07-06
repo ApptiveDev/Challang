@@ -19,10 +19,9 @@ public enum AuthErrorCode implements ResponseStatus {
     MAIL_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, false, 500, "인증 이메일 전송 실패"),
     EMAIL_VERIFICATION_FAILED(HttpStatus.BAD_REQUEST, false, 400, "이메일 인증에 실패했습니다."),
 
-
     UNAUTHORIZED_REQUEST(HttpStatus.UNAUTHORIZED, false, 401, "인증이 필요합니다. 토큰이 유효하지 않습니다."),
+    FORBIDDEN_ACCESS(HttpStatus.FORBIDDEN, false, 403, "해당 리소스에 접근할 권한이 없습니다."),
     LOGOUT_FAILED(HttpStatus.BAD_REQUEST, false, 400, "로그아웃에 실패했습니다.");
-
 
     private final HttpStatusCode httpStatusCode;
     private final boolean isSuccess;
