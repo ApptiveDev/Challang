@@ -47,4 +47,9 @@ public interface ArchiveRepository extends JpaRepository<Archive, Long> {
 
     // 술 id만 얻는 용도 => joinX
     List<Archive> findByUser(User user);
-};
+
+    @Modifying
+    @Query("DELETE FROM Archive a WHERE a.user = :user")
+    void deleteAllByUser(@Param("user") User user);
+
+}

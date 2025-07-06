@@ -19,7 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.challang.backend.review.dto.request.ReportRequestDto;
+//import com.challang.backend.review.dto.request.ReportRequestDto;
 import jakarta.validation.Valid;
 
 import org.springframework.data.domain.Pageable;
@@ -43,7 +43,7 @@ public class ReviewController {
     @PostMapping("/liquors/{liquorId}/reviews")
     public ResponseEntity<BaseResponse<ReviewResponseDto>> createReview(
             @PathVariable Long liquorId,
-            @RequestBody ReviewCreateRequestDto request,
+            @RequestBody @Valid ReviewCreateRequestDto request,
             @CurrentUser User user) {
         ReviewResponseDto responseDto = reviewService.createReview(liquorId, request, user.getUserId());
         return ResponseEntity.ok(new BaseResponse<>(responseDto));
@@ -139,10 +139,10 @@ public class ReviewController {
     @PostMapping("/reviews/{reviewId}/report")
     public ResponseEntity<BaseResponse<String>> reportReview(
             @PathVariable Long reviewId,
-            @Valid @RequestBody ReportRequestDto request,
+//            @Valid @RequestBody ReportRequestDto request,
             @CurrentUser User user) {
 
-        reviewService.reportReview(reviewId, request, user);
+        reviewService.reportReview(reviewId, user);
         return ResponseEntity.ok(new BaseResponse<>("신고가 접수되었습니다."));
     }
 }

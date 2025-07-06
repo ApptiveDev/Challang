@@ -4,6 +4,9 @@ import com.challang.backend.review.entity.Review;
 import com.challang.backend.review.entity.ReviewReaction;
 import com.challang.backend.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -29,4 +32,13 @@ public interface ReviewReactionRepository extends JpaRepository<ReviewReaction, 
      * @param reviewId 리뷰의 ID
      */
     void deleteByUserAndReviewId(User user, Long reviewId);
+
+    @Modifying
+    @Query("delete from ReviewReaction rr where rr.user = :user")
+    void deleteAllByUser(@Param("user") User user);
+
+    @Modifying
+    @Query("delete from ReviewReaction rr where rr.review = :review")
+    void deleteAllByReview(@Param("review") Review review);
+
 }
