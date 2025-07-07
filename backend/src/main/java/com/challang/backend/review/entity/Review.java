@@ -55,6 +55,12 @@ public class Review extends BaseEntity {
     @Builder.Default
     private List<ReviewTag> reviewTags = new ArrayList<>();
 
+    @OneToMany(mappedBy = "review", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<ReviewReport> reports = new ArrayList<>();
+
+    @OneToMany(mappedBy = "review", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<ReviewReaction> reactions = new ArrayList<>();
+
     public void update(ReviewUpdateRequestDto request, List<ReviewTag> newTags) {
         if (request.content() != null) {
             this.content = request.content();

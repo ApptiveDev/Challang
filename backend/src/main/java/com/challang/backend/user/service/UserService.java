@@ -11,6 +11,7 @@ import com.challang.backend.review.repository.ReviewReactionRepository;
 import com.challang.backend.review.repository.ReviewReportRepository;
 import com.challang.backend.review.repository.ReviewRepository;
 import com.challang.backend.review.repository.ReviewTagRepository;
+import com.challang.backend.user.dto.UserActivityCountsResponse;
 import com.challang.backend.user.entity.User;
 import com.challang.backend.user.exception.UserErrorCode;
 import com.challang.backend.user.repository.UserRepository;
@@ -46,6 +47,17 @@ public class UserService implements UserDetailsService {
 
     public User getByLoginId(Long id) {
         return userRepository.findById(id).orElseThrow(() -> new BaseException(UserErrorCode.USER_NOT_FOUND));
+    }
+
+    @Transactional(readOnly = true)
+    public UserActivityCountsResponse getUserActivityCounts(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BaseException(UserErrorCode.USER_NOT_FOUND));
+
+        long likedCurationCount = archiveRepository.countByUser(user);
+        long writtenReviewCount = reviewRepository.countByWriter(user);
+
+        return new UserActivityCountsResponse(likedCurationCount, writtenReviewCount);
     }
 
     @Transactional
