@@ -6,6 +6,7 @@ import java.util.List;
 
 public record ReviewCreateRequestDto(
         @NotBlank(message = "리뷰 내용은 필수 입력값입니다.")
+        @Size(min = 5, max = 300, message = "리뷰 내용은 최소 5자, 최대 300자까지 입력할 수 있습니다.")
         String content,
 
         @NotBlank(message = "리뷰 이미지는 필수입니다.")
