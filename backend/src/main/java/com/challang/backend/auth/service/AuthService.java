@@ -10,8 +10,10 @@ import com.challang.backend.user.entity.User;
 import com.challang.backend.user.exception.UserErrorCode;
 import com.challang.backend.user.repository.UserRepository;
 import com.challang.backend.user.service.UserService;
+import com.challang.backend.withdrawal.entity.ReasonType;
+import com.challang.backend.withdrawal.entity.WithdrawalReason;
+import com.challang.backend.withdrawal.repository.WithdrawalReasonRepository;
 import jakarta.servlet.http.HttpServletRequest;
-import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +23,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
 
 
 @RequiredArgsConstructor
@@ -41,6 +45,8 @@ public class AuthService {
     private final JwtUtil jwtUtil;
     private final RedisUtil redisUtil;
     private final UserService userService;
+
+    private final WithdrawalReasonRepository withdrawalReasonRepository;
 
     @Value("${jwt.refresh-expired-time}")
     private long refreshExpiredSeconds;
@@ -179,9 +185,15 @@ public class AuthService {
 
 
     @Transactional
-    public void deleteUser(final Long id, String refreshToken) {
+    public void deleteUser(final Long id, String refreshToken, ReasonType reason) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new BaseException(UserErrorCode.USER_NOT_FOUND));
+
+        WithdrawalReason withdrawalReason = WithdrawalReason.builder()
+                .userId(user.getUserId())
+                .reason(reason)
+                .build();
+        withdrawalReasonRepository.save(withdrawalReason);
 
         try {
             String jti = jwtUtil.getJti(refreshToken);
@@ -208,6 +220,5 @@ public class AuthService {
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
-
 
 }

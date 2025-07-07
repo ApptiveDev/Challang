@@ -132,6 +132,9 @@ public class ReviewService {
         Review review = findReview(reviewId, user.getUserId());
         Long liquorId = review.getLiquor().getId(); // 삭제 전 liquorId 확보
 
+        reviewReportRepository.deleteAllByReview(review);
+        reviewReactionRepository.deleteAllByReview(review);
+
         s3Service.deleteByKey(review.getImageUrl());
         reviewRepository.delete(review);
 
