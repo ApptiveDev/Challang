@@ -1,6 +1,5 @@
 package com.stellan.challang.ui.screen.home
 
-import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,9 +25,9 @@ import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -44,13 +43,16 @@ import androidx.compose.ui.unit.dp
 import com.stellan.challang.rememberRecentSearches
 import com.stellan.challang.saveSearchQuery
 import com.stellan.challang.ui.theme.PaperlogyFamily
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CuratingScreen() {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+
     var text by rememberSaveable { mutableStateOf("") }
     var expanded by rememberSaveable { mutableStateOf(false) }
-
     val recentSearches by rememberRecentSearches()
 
     Box(Modifier
@@ -64,7 +66,9 @@ fun CuratingScreen() {
                 SearchBarDefaults.InputField(
                     query = text,
                     onQueryChange = { text = it },
-                    onSearch = { expanded = false },
+                    onSearch = {
+                        scope.launch { saveSearchQuery(context, text) }
+                        expanded = false },
                     expanded = expanded,
                     onExpandedChange = { expanded = it },
                     trailingIcon = { Icon(Icons.Default.Search,
@@ -89,17 +93,14 @@ fun CuratingScreen() {
                 LazyRow(
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    items(recentSearches) { q ->
+                    items(recentSearches) { past ->
                         SuggestionChip(
                             onClick = {
-                                text = q
+                                text = past
                                 expanded = false
-                                LaunchedEffect(q) {
-                                    saveSearchQuery(LocalContext.current, q)
-                                }
                             },
                             label = { Text(
-                                text = q,
+                                text = past,
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(horizontal = 5.dp),
