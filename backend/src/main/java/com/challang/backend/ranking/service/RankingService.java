@@ -21,9 +21,6 @@ public class RankingService {
     private final ArchiveRepository archiveRepository;
     private final LiquorRepository liquorRepository;
 
-    @Value("${cloud.aws.s3.url}")
-    private String s3BaseUrl;
-
     public List<RankingResponseDto> getTop8ArchivedLiquors() {
         List<Object[]> results = archiveRepository.findTop8ArchivedLiquors(PageRequest.of(0, 8));
 
@@ -33,7 +30,7 @@ public class RankingService {
                     Long archiveCount = (Long) result[1];
                     Liquor liquor = liquorRepository.findById(liquorId).orElse(null);
                     if (liquor != null) {
-                        return new RankingResponseDto(liquor, archiveCount, s3BaseUrl);
+                        return new RankingResponseDto(liquor, archiveCount);
                     }
                     return null;
                 })

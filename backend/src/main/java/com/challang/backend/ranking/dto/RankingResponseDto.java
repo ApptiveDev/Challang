@@ -9,7 +9,7 @@ public class RankingResponseDto {
     private final String name;
     private final Long archiveCount;
 
-    public RankingResponseDto(Liquor liquor, Long archiveCount, String s3BaseUrl) {
+    public RankingResponseDto(Liquor liquor, Long archiveCount) {
         this.liquorId = liquor.getId();
         this.name = liquor.getName();
         this.archiveCount = archiveCount;
