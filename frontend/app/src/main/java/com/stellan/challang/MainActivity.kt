@@ -61,13 +61,12 @@ fun rememberRecentSearches(): State<List<String>> {
     return flow.collectAsState(initial = emptyList())
 }
 
-@Composable
-fun rememberGuideShown(): State<Boolean> {
-    val context = LocalContext.current
-    val prefsFlow = context.dataStore.data
-    val shownFlow = prefsFlow.map { prefs ->
-        prefs[GUIDE_SHOWN_KEY] ?: false
+fun Context.hasSeenGuideFlow() = dataStore.data
+    .map { prefs -> prefs[GUIDE_SHOWN_KEY] ?: false }
+
+suspend fun Context.setGuideShown() {
+    dataStore.edit { prefs ->
+        prefs[GUIDE_SHOWN_KEY] = true
     }
-    return shownFlow.collectAsState(initial = false)
 }
 
