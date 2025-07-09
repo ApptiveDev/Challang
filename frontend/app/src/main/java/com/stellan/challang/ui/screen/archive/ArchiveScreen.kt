@@ -85,15 +85,15 @@ fun ArchiveScreen() {
                 ) {
                     Box(Modifier.fillMaxSize()) {
                         Image(
-                            painter = painterResource(R.drawable.ballantines_30_years_old),
+                            painter = painterResource(R.drawable.balvenie),
                             contentDescription = null,
-                            contentScale = ContentScale.Crop,
+                            contentScale = ContentScale.Fit,
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(20.dp)
                         )
                         Text(
-                            text = "발렌타인 30년",
+                            text = "발베니",
                             color = Color.White,
                             fontWeight = FontWeight.Bold,
                             fontSize = 24.sp,
