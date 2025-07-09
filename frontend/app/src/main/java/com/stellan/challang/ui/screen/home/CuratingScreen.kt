@@ -47,7 +47,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CuratingScreen() {
+fun CuratingScreen(onDetail: (drinkID: String) -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 

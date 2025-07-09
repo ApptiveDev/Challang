@@ -9,12 +9,21 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d1bc515f-00d0-4ded-8c42-b8f1834c1bd0" name="Changes" comment="최근 검색어 기능 완료.">
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/ballantines_30_years_old.png" afterDir="false" />
+    <list default="true" id="d1bc515f-00d0-4ded-8c42-b8f1834c1bd0" name="Changes" comment="아카이브 스크린 완성">
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/stellan/challang/ui/navigation/HomeNavGraph.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/stellan/challang/ui/screen/home/CuratingGuideScreen.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/stellan/challang/ui/screen/home/DrinkDetailScreen.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/stellan/challang/ui/screen/home/ReviewScreen.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/stellan/challang/ui/screen/home/WriteReviewScreen.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/balvenie.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/jim_beam.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/stellan/challang/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/stellan/challang/MainActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/stellan/challang/ui/navigation/MainNavGraph.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/stellan/challang/ui/navigation/MainNavGraph.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/stellan/challang/ui/screen/archive/ArchiveScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/stellan/challang/ui/screen/archive/ArchiveScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/stellan/challang/ui/screen/home/CuratingScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/stellan/challang/ui/screen/home/CuratingScreen.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -91,23 +100,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Android App.Challang.app.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "ResourceManagerPrefKey.ResourceType": "DRAWABLE",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.readMode.enableVisualFormatting": "true",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "com.google.services.firebase.aqiPopupShown": "true",
-    "git-widget-placeholder": "frontend/fivestark/curating",
-    "last_opened_file_path": "/Users/fivestark/AndroidStudioProjects/Challang/frontend",
-    "settings.editor.selected.configurable": "memory.settings"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Android App.Challang.app.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;ResourceManagerPrefKey.ResourceType&quot;: &quot;DRAWABLE&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;com.google.services.firebase.aqiPopupShown&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;frontend/fivestark/curating&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/fivestark/AndroidStudioProjects/Challang/frontend&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;memory.settings&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="K2MoveDeclarationsDialog.RECENT_PACKAGE_KEY">
       <recent name="com.stellan.challang.ui.screen.auth" />
@@ -311,7 +320,15 @@
       <option name="project" value="LOCAL" />
       <updated>1751953529246</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="아카이브 스크린 완성">
+      <option name="closed" value="true" />
+      <created>1751966694497</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1751966694497</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -352,7 +369,8 @@
     <MESSAGE value="searchbar expanded 화면 작성(ing). type.kt 에 기본글꼴 설정." />
     <MESSAGE value="searcbar expanded 상태 페이지 완성. 최근 검색어 기능 구현 에러 해결 중." />
     <MESSAGE value="최근 검색어 기능 완료." />
-    <option name="LAST_COMMIT_MESSAGE" value="최근 검색어 기능 완료." />
+    <MESSAGE value="아카이브 스크린 완성" />
+    <option name="LAST_COMMIT_MESSAGE" value="아카이브 스크린 완성" />
   </component>
   <component name="play_dynamic_filters_status">
     <option name="appIdToCheckInfo">
