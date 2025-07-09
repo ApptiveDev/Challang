@@ -1,15 +1,15 @@
 package com.stellan.challang.ui.screen.home
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -17,6 +17,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SearchBar
@@ -25,21 +27,25 @@ import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.semantics.isTraversalGroup
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.traversalIndex
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.stellan.challang.R
+import com.stellan.challang.hasSeenGuideFlow
 import com.stellan.challang.rememberRecentSearches
 import com.stellan.challang.saveSearchQuery
 import com.stellan.challang.ui.theme.PaperlogyFamily
@@ -53,15 +59,15 @@ fun CuratingScreen(onDetail: (drinkID: String) -> Unit) {
 
     var text by rememberSaveable { mutableStateOf("") }
     var expanded by rememberSaveable { mutableStateOf(false) }
+
     val recentSearches by rememberRecentSearches()
 
-    Box(Modifier
-        .fillMaxSize()
-        .semantics { isTraversalGroup = true }) {
+    val hasSeenGuide by context.hasSeenGuideFlow().collectAsState(initial = false)
+    var showGuide by remember { mutableStateOf(!hasSeenGuide) }
+
+    Column (Modifier.fillMaxSize()) {
         SearchBar(
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .semantics { traversalIndex = 0f },
+            modifier = Modifier.align(Alignment.CenterHorizontally),
             inputField = {
                 SearchBarDefaults.InputField(
                     query = text,
@@ -178,18 +184,26 @@ fun CuratingScreen(onDetail: (drinkID: String) -> Unit) {
             }
         }
 
-        LazyColumn(
-            contentPadding = PaddingValues(start = 16.dp, top = 72.dp, end = 16.dp, bottom = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.semantics { traversalIndex = 1f },
+        Card(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(27.dp)
+                .background(brush = Brush.verticalGradient(
+                    colors = listOf(Color(0xFF6CD0D8), Color.White)
+                ), shape = RoundedCornerShape(12.dp)),
+            colors = CardDefaults.cardColors(
+                containerColor = Color.Transparent
+            ),
+            shape = RoundedCornerShape(12.dp),
         ) {
-            val list = List(100) { "Text $it" }
-            items(count = list.size) {
-                Text(
-                    text = list[it],
+            Box(Modifier.fillMaxSize()) {
+                Image(
+                    painter = painterResource(R.drawable.balvenie),
+                    contentDescription = null,
+                    contentScale = ContentScale.Fit,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
+                        .fillMaxSize()
+                        .padding(20.dp)
                 )
             }
         }

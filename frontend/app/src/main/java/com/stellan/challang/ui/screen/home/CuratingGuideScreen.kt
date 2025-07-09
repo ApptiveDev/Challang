@@ -109,7 +109,8 @@ private fun VerticalGuide(
 
         Text(
             "Pass", fontFamily = PaperlogyFamily, fontSize = 20.sp,
-            fontWeight = FontWeight.Bold, color = Color.White, modifier = Modifier.padding(top = 16.dp)
+            fontWeight = FontWeight.Bold, color = Color.White,
+            modifier = Modifier.padding(top = 16.dp)
         )
     }
 }
@@ -127,7 +128,8 @@ private fun HorizontalGuide(
     ) {
         Text(
             "Bad", fontFamily = PaperlogyFamily, fontSize = 20.sp,
-            fontWeight = FontWeight.Bold, color = Color.White, modifier = Modifier.padding(end = 16.dp)
+            fontWeight = FontWeight.Bold, color = Color.White,
+            modifier = Modifier.padding(end = 16.dp)
         )
 
         Canvas(modifier = Modifier.size(lineLength, lineLength)) {
@@ -153,7 +155,8 @@ private fun HorizontalGuide(
         }
         Text(
             "Good", fontFamily = PaperlogyFamily, fontSize = 20.sp,
-            fontWeight = FontWeight.Bold, color = Color.White, modifier = Modifier.padding(start = 16.dp)
+            fontWeight = FontWeight.Bold, color = Color.White,
+            modifier = Modifier.padding(start = 16.dp)
         )
     }
 }
