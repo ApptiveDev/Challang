@@ -9,14 +9,10 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d1bc515f-00d0-4ded-8c42-b8f1834c1bd0" name="Changes" comment="큐레이팅 가이드 순서 잡는중.">
+    <list default="true" id="d1bc515f-00d0-4ded-8c42-b8f1834c1bd0" name="Changes" comment="큐레이팅 가이드 순서 완성">
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/stellan/challang/ui/navigation/HomeNavGraph.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/stellan/challang/ui/navigation/HomeNavGraph.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/stellan/challang/ui/screen/home/CuratingGuideScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/stellan/challang/ui/screen/home/CuratingGuideScreen.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/stellan/challang/ui/screen/home/CuratingScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/stellan/challang/ui/screen/home/CuratingScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/stellan/challang/ui/screen/home/MainScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/stellan/challang/ui/screen/home/MainScreen.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -337,7 +333,15 @@
       <option name="project" value="LOCAL" />
       <updated>1752054777463</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="큐레이팅 가이드 순서 완성">
+      <option name="closed" value="true" />
+      <created>1752129820871</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1752129820871</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -381,7 +385,8 @@
     <MESSAGE value="아카이브 스크린 완성" />
     <MESSAGE value="홈 큐레이팅 플로우 구성 스크린 등록." />
     <MESSAGE value="큐레이팅 가이드 순서 잡는중." />
-    <option name="LAST_COMMIT_MESSAGE" value="큐레이팅 가이드 순서 잡는중." />
+    <MESSAGE value="큐레이팅 가이드 순서 완성" />
+    <option name="LAST_COMMIT_MESSAGE" value="큐레이팅 가이드 순서 완성" />
   </component>
   <component name="play_dynamic_filters_status">
     <option name="appIdToCheckInfo">
