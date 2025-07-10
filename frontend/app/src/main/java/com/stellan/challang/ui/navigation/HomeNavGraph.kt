@@ -12,12 +12,7 @@ fun NavGraphBuilder.homeNavGraph(
     rootNavController: NavHostController,
     bottomNavController: NavHostController
 ) {
-    navigation(startDestination = "curatingGuide", route = "home") {
-        composable("curatingGuide") {
-            CuratingGuideScreen(
-                onComplete = { bottomNavController.navigate("curating") }
-            )
-        }
+    navigation(startDestination = "curating", route = "home") {
         composable("curating") {
             CuratingScreen(
                 onDetail = { drinkId ->
