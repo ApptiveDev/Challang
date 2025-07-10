@@ -48,6 +48,7 @@ import com.stellan.challang.R
 import com.stellan.challang.hasSeenGuideFlow
 import com.stellan.challang.rememberRecentSearches
 import com.stellan.challang.saveSearchQuery
+import com.stellan.challang.setGuideShown
 import com.stellan.challang.ui.theme.PaperlogyFamily
 import kotlinx.coroutines.launch
 
@@ -65,147 +66,158 @@ fun CuratingScreen(onDetail: (drinkID: String) -> Unit) {
     val hasSeenGuide by context.hasSeenGuideFlow().collectAsState(initial = false)
     var showGuide by remember { mutableStateOf(!hasSeenGuide) }
 
-    Column (Modifier.fillMaxSize()) {
-        SearchBar(
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            inputField = {
-                SearchBarDefaults.InputField(
-                    query = text,
-                    onQueryChange = { text = it },
-                    onSearch = {
-                        scope.launch { saveSearchQuery(context, text) }
-                        expanded = false },
-                    expanded = expanded,
-                    onExpandedChange = { expanded = it },
-                    trailingIcon = { Icon(Icons.Default.Search,
-                        contentDescription = null) },
-                )
-            },
-            expanded = expanded,
-            onExpandedChange = { expanded = it },
-            colors = SearchBarDefaults.colors(
-                containerColor = if (expanded) Color.White else Color(0xFFCEEFF2)
-            ),
-            shape = RoundedCornerShape(12.dp),
-        ) {
-            Column(modifier = Modifier
-                .fillMaxWidth()
-                .padding(25.dp)) {
-                Text("최근 검색어",
-                    fontFamily = PaperlogyFamily,
-                    fontWeight = FontWeight.SemiBold,
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-                LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    items(recentSearches) { past ->
-                        SuggestionChip(
-                            onClick = {
-                                text = past
-                                expanded = false
-                            },
-                            label = { Text(
-                                text = past,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 5.dp),
-                                textAlign = TextAlign.Center
-                            ) },
-                            border = SuggestionChipDefaults.suggestionChipBorder(
-                                enabled = true,
-                                borderColor = Color.Transparent
-                            ),
-                            colors = SuggestionChipDefaults.suggestionChipColors(
-                                containerColor = Color(0xFFCEEFF2)
+    Box(Modifier.fillMaxSize()) {
+        Column (Modifier.fillMaxSize()) {
+            SearchBar(
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                inputField = {
+                    SearchBarDefaults.InputField(
+                        query = text,
+                        onQueryChange = { text = it },
+                        onSearch = {
+                            scope.launch { saveSearchQuery(context, text) }
+                            expanded = false },
+                        expanded = expanded,
+                        onExpandedChange = { expanded = it },
+                        trailingIcon = { Icon(Icons.Default.Search,
+                            contentDescription = null) },
+                    )
+                },
+                expanded = expanded,
+                onExpandedChange = { expanded = it },
+                colors = SearchBarDefaults.colors(
+                    containerColor = if (expanded) Color.White else Color(0xFFCEEFF2)
+                ),
+                shape = RoundedCornerShape(12.dp),
+            ) {
+                Column(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(25.dp)) {
+                    Text("최근 검색어",
+                        fontFamily = PaperlogyFamily,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        items(recentSearches) { past ->
+                            SuggestionChip(
+                                onClick = {
+                                    text = past
+                                    expanded = false
+                                },
+                                label = { Text(
+                                    text = past,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 5.dp),
+                                    textAlign = TextAlign.Center
+                                ) },
+                                border = SuggestionChipDefaults.suggestionChipBorder(
+                                    enabled = true,
+                                    borderColor = Color.Transparent
+                                ),
+                                colors = SuggestionChipDefaults.suggestionChipColors(
+                                    containerColor = Color(0xFFCEEFF2)
+                                )
                             )
-                        )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(40.dp))
+                    Text("추천 키워드",
+                        fontFamily = PaperlogyFamily,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        items(6) { iter ->
+                            SuggestionChip(
+                                onClick = {},
+                                label = { Text(
+                                    "사랑해",
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 5.dp),
+                                    textAlign = TextAlign.Center
+                                ) },
+                                border = SuggestionChipDefaults.suggestionChipBorder(
+                                    enabled = true,
+                                    borderColor = Color.Transparent
+                                ),
+                                colors = SuggestionChipDefaults.suggestionChipColors(
+                                    containerColor = Color(0xFFCEEFF2)
+                                )
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(40.dp))
+                    Text("실시간 인기 주류 순위",
+                        fontFamily = PaperlogyFamily,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(2),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        items(8) { iter ->
+                            SuggestionChip(
+                                onClick = {},
+                                label = { Text(
+                                    "사랑해",
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 5.dp),
+                                    textAlign = TextAlign.Center
+                                ) },
+                                border = SuggestionChipDefaults.suggestionChipBorder(
+                                    enabled = true,
+                                    borderColor = Color.Transparent
+                                ),
+                                colors = SuggestionChipDefaults.suggestionChipColors(
+                                    containerColor = Color(0xFFCEEFF2)
+                                )
+                            )
+                        }
                     }
                 }
-                Spacer(modifier = Modifier.height(40.dp))
-                Text("추천 키워드",
-                    fontFamily = PaperlogyFamily,
-                    fontWeight = FontWeight.SemiBold,
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-                LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    items(6) { iter ->
-                        SuggestionChip(
-                            onClick = {},
-                            label = { Text(
-                                "사랑해",
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 5.dp),
-                                textAlign = TextAlign.Center
-                            ) },
-                            border = SuggestionChipDefaults.suggestionChipBorder(
-                                enabled = true,
-                                borderColor = Color.Transparent
-                            ),
-                            colors = SuggestionChipDefaults.suggestionChipColors(
-                                containerColor = Color(0xFFCEEFF2)
-                            )
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.height(40.dp))
-                Text("실시간 인기 주류 순위",
-                    fontFamily = PaperlogyFamily,
-                    fontWeight = FontWeight.SemiBold,
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    items(8) { iter ->
-                        SuggestionChip(
-                            onClick = {},
-                            label = { Text(
-                                "사랑해",
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 5.dp),
-                                textAlign = TextAlign.Center
-                            ) },
-                            border = SuggestionChipDefaults.suggestionChipBorder(
-                                enabled = true,
-                                borderColor = Color.Transparent
-                            ),
-                            colors = SuggestionChipDefaults.suggestionChipColors(
-                                containerColor = Color(0xFFCEEFF2)
-                            )
-                        )
-                    }
+            }
+
+            Card(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(27.dp)
+                    .background(brush = Brush.verticalGradient(
+                        colors = listOf(Color(0xFF6CD0D8), Color.White)
+                    ), shape = RoundedCornerShape(12.dp)),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.Transparent
+                ),
+                shape = RoundedCornerShape(12.dp),
+            ) {
+                Box(Modifier.fillMaxSize()) {
+                    Image(
+                        painter = painterResource(R.drawable.balvenie),
+                        contentDescription = null,
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(20.dp)
+                    )
                 }
             }
         }
 
-        Card(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(27.dp)
-                .background(brush = Brush.verticalGradient(
-                    colors = listOf(Color(0xFF6CD0D8), Color.White)
-                ), shape = RoundedCornerShape(12.dp)),
-            colors = CardDefaults.cardColors(
-                containerColor = Color.Transparent
-            ),
-            shape = RoundedCornerShape(12.dp),
-        ) {
-            Box(Modifier.fillMaxSize()) {
-                Image(
-                    painter = painterResource(R.drawable.balvenie),
-                    contentDescription = null,
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(20.dp)
-                )
-            }
+        if (showGuide) {
+            CuratingGuideScreen(
+                onComplete = {
+                    showGuide = false
+                    // scope.launch { context.setGuideShown() }
+                }
+            )
         }
     }
 }

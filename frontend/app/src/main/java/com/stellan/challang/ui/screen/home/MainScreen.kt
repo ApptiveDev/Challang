@@ -70,7 +70,7 @@ fun MainScreen(rootNavController: NavHostController) {
 @Composable
 fun BottomBar(navController: NavHostController) {
     val tabs = listOf(
-        BottomTab("home",    Icons.Outlined.Home,            "Home"),
+        BottomTab("curating",    Icons.Outlined.Home,            "Home"),
         BottomTab("archive", Icons.Outlined.BookmarkBorder, "Archive"),
         BottomTab("mypageMain",  Icons.Default.Menu,            "My Page")
     )

@@ -29,7 +29,7 @@ import com.stellan.challang.ui.theme.PaperlogyFamily
 
 @Composable
 fun CuratingGuideScreen(
-    overlayAlpha: Float = 0.3f,
+    overlayAlpha: Float = 0.6f,
     lineLength: Dp = 200.dp,
     bigCircleRadius: Dp = 30.dp,
     smallCircleRadius: Dp = 8.dp,
@@ -81,7 +81,7 @@ private fun VerticalGuide(
     ) {
         Text(
             "Rewind", fontFamily = PaperlogyFamily, fontSize = 20.sp,
-            fontWeight = FontWeight.Bold, color = Color.White,
+            fontWeight = FontWeight.Normal, color = Color.White,
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
@@ -109,7 +109,7 @@ private fun VerticalGuide(
 
         Text(
             "Pass", fontFamily = PaperlogyFamily, fontSize = 20.sp,
-            fontWeight = FontWeight.Bold, color = Color.White,
+            fontWeight = FontWeight.Normal, color = Color.White,
             modifier = Modifier.padding(top = 16.dp)
         )
     }
@@ -128,7 +128,7 @@ private fun HorizontalGuide(
     ) {
         Text(
             "Bad", fontFamily = PaperlogyFamily, fontSize = 20.sp,
-            fontWeight = FontWeight.Bold, color = Color.White,
+            fontWeight = FontWeight.Normal, color = Color.White,
             modifier = Modifier.padding(end = 16.dp)
         )
 
@@ -155,7 +155,7 @@ private fun HorizontalGuide(
         }
         Text(
             "Good", fontFamily = PaperlogyFamily, fontSize = 20.sp,
-            fontWeight = FontWeight.Bold, color = Color.White,
+            fontWeight = FontWeight.Normal, color = Color.White,
             modifier = Modifier.padding(start = 16.dp)
         )
     }
