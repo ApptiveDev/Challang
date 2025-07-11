@@ -2,6 +2,7 @@ package com.stellan.challang.ui.screen.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,6 +37,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -295,12 +297,33 @@ fun CuratingScreen(onDetail: (drinkID: String) -> Unit) {
         }
 
         if (showGuide) {
-            CuratingGuideScreen(
-                onComplete = {
-                    showGuide = false
-                    // scope.launch { context.setGuideShown() }
+            var step by remember { mutableIntStateOf(1) }
+
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.6f))
+                    .clickable {
+                        if (step == 1) step = 2
+                        else {
+                            showGuide = false
+                            // scope.launch { context.setGuideShown() }
+                        }
+                    }
+            ) {
+                val painter = when (step) {
+                    1 -> painterResource(R.drawable.curating_guide_1)
+                    else -> painterResource(R.drawable.curating_guide_2)
                 }
-            )
+
+                Image(
+                    painter = painter,
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.FillBounds,
+                    alpha = 0.6f
+                )
+            }
         }
     }
 }
