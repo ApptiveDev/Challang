@@ -321,7 +321,6 @@ fun CuratingScreen(onDetail: (drinkID: String) -> Unit) {
                     contentDescription = null,
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.FillBounds,
-                    alpha = 0.6f
                 )
             }
         }
