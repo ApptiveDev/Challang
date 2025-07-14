@@ -320,7 +320,7 @@ fun CuratingScreen(onDetail: (drinkID: String) -> Unit) {
                     painter = painter,
                     contentDescription = null,
                     modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.FillBounds,
+                    contentScale = ContentScale.FillWidth,
                 )
             }
         }
