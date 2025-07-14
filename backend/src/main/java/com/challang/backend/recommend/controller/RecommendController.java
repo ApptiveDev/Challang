@@ -3,6 +3,7 @@ package com.challang.backend.recommend.controller;
 import com.challang.backend.auth.annotation.CurrentUser;
 import com.challang.backend.liquor.dto.response.LiquorResponse;
 import com.challang.backend.recommend.service.RecommendService;
+import com.challang.backend.tag.dto.response.TagResponse;
 import com.challang.backend.user.entity.User;
 import com.challang.backend.util.response.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,6 +31,18 @@ public class RecommendController {
             @CurrentUser User user
     ) {
         List<LiquorResponse> response = recommendService.recommendLiquor(user);
+        return ResponseEntity.ok(new BaseResponse<>(response));
+    }
+
+    @Operation(summary = "추천 키워드 조회", description = "사용자가 '좋아요'한 주류의 키워드를 기반으로 추천 키워드 목록을 조회합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "추천 키워드 조회 성공")
+    })
+    @GetMapping("/keywords")
+    public ResponseEntity<BaseResponse<List<TagResponse>>> getRecommendedKeywords(
+            @CurrentUser User user
+    ) {
+        List<TagResponse> response = recommendService.getRecommendedKeywords(user);
         return ResponseEntity.ok(new BaseResponse<>(response));
     }
 }

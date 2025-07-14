@@ -8,13 +8,16 @@ import com.challang.backend.liquor.repository.LiquorRepository;
 import com.challang.backend.preference.entity.LiquorPreferenceTag;
 import com.challang.backend.preference.repository.*;
 import com.challang.backend.review.repository.ReviewRepository;
+import com.challang.backend.tag.dto.response.TagResponse;
 import com.challang.backend.tag.entity.LiquorTag;
 import com.challang.backend.tag.entity.Tag;
+import com.challang.backend.tag.repository.TagRepository;
 import com.challang.backend.user.entity.User;
 import java.util.*;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -29,6 +32,7 @@ public class RecommendService {
     private final LiquorFeedbackRepository feedbackRepository;
     private final ArchiveRepository archiveRepository;
     private final ReviewRepository reviewRepository;
+    private final TagRepository tagRepository;
 
 
     @Value("${cloud.aws.s3.url}")
@@ -78,6 +82,14 @@ public class RecommendService {
                 .map(s -> LiquorResponse.fromEntity(s.liquor, s3BaseUrl))
                 .toList();
 
+    }
+
+    public List<TagResponse> getRecommendedKeywords(User user) {
+        List<Tag> topTags = tagRepository.findTopTagsByUserWithGoodFeedback(user, PageRequest.of(0, 6));
+
+        return topTags.stream()
+                .map(TagResponse::fromEntity)
+                .collect(Collectors.toList());
     }
 
     private double calculateJaccard(Set<Tag> userTags, Liquor liquor) {
