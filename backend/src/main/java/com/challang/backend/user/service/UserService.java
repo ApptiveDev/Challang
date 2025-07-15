@@ -12,6 +12,7 @@ import com.challang.backend.review.repository.ReviewReportRepository;
 import com.challang.backend.review.repository.ReviewRepository;
 import com.challang.backend.review.repository.ReviewTagRepository;
 import com.challang.backend.user.dto.UserActivityCountsResponse;
+import com.challang.backend.user.dto.UserInfoResponse;
 import com.challang.backend.user.entity.User;
 import com.challang.backend.user.exception.UserErrorCode;
 import com.challang.backend.user.repository.UserRepository;
@@ -44,6 +45,12 @@ public class UserService implements UserDetailsService {
         return null;
     }
 
+    @Transactional(readOnly = true)
+    public UserInfoResponse getUserInfo(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BaseException(UserErrorCode.USER_NOT_FOUND));
+        return UserInfoResponse.from(user);
+    }
 
     public User getByLoginId(Long id) {
         return userRepository.findById(id).orElseThrow(() -> new BaseException(UserErrorCode.USER_NOT_FOUND));
