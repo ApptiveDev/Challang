@@ -197,15 +197,16 @@ fun CuratingScreen(onDetail: (drinkID: String) -> Unit) {
             }
 
             Card(
-                modifier = Modifier
+                Modifier
                     .fillMaxSize()
                     .padding(27.dp)
-                    .background(brush = Brush.verticalGradient(
-                        colors = listOf(Color(0xFF6CD0D8), Color.White)
-                    ), shape = RoundedCornerShape(24.dp)),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color.Transparent
-                ),
+                    .background(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(Color(0xFF6CD0D8), Color.White)
+                        ),
+                        shape = RoundedCornerShape(24.dp)
+                    ),
+                colors = CardDefaults.cardColors(containerColor = Color.Transparent),
                 shape = RoundedCornerShape(24.dp),
             ) {
                 Box(Modifier.fillMaxSize()) {
