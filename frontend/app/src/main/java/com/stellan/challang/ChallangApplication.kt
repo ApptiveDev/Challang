@@ -13,6 +13,7 @@ class ChallangApplication : Application() {
 
         // 카카오 SDK 초기화
         KakaoSdk.init(this, "")
+
     }
 }
 

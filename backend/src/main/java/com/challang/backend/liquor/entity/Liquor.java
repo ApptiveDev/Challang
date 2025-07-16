@@ -38,9 +38,6 @@ public class Liquor extends BaseEntity {
     @Column(name = "origin", nullable = false)
     private String origin;
 
-    @Column(name = "color", nullable = false)
-    private String color;
-
     @Column(name = "min_abv", nullable = false)
     private Double minAbv;
 
@@ -52,11 +49,11 @@ public class Liquor extends BaseEntity {
 
     @Column(name = "average_rating")
     @ColumnDefault("0.0")
-    private Double averageRating;
+    private Double averageRating = 0.0;
 
     @Column(name = "review_count")
     @ColumnDefault("0")
-    private Integer reviewCount;
+    private Integer reviewCount = 0;
 
     public void updateAverageRating(Double newAverageRating, Integer newReviewCount) {
         this.averageRating = newAverageRating;
@@ -65,14 +62,13 @@ public class Liquor extends BaseEntity {
 
     @Builder
     public Liquor(LiquorLevel level, LiquorType type, String name, String imageUrl, String tastingNote, String origin,
-                  String color, Double minAbv, Double maxAbv) {
+                  Double minAbv, Double maxAbv) {
         this.level = level;
         this.type = type;
         this.name = name;
         this.imageUrl = imageUrl;
         this.tastingNote = tastingNote;
         this.origin = origin;
-        this.color = color;
         this.minAbv = minAbv;
         this.maxAbv = maxAbv;
     }
@@ -86,9 +82,6 @@ public class Liquor extends BaseEntity {
         }
         if (request.origin() != null) {
             this.origin = request.origin();
-        }
-        if (request.color() != null) {
-            this.color = request.color();
         }
         if (request.minAbv() != null) {
             this.minAbv = request.minAbv();
@@ -104,6 +97,24 @@ public class Liquor extends BaseEntity {
         }
         if (type != null) {
             this.type = type;
+        }
+    }
+
+    public void handleReviewCreation(double newRating) {
+        double totalRating = (this.averageRating * this.reviewCount) + newRating;
+        this.reviewCount++;
+        this.averageRating = totalRating / this.reviewCount;
+    }
+
+    public void handleReviewDeletion(double deletedRating) {
+        // 리뷰가 하나뿐이었을 경우, 0으로 초기화하여 0으로 나누는 오류 방지
+        if (this.reviewCount <= 1) {
+            this.reviewCount = 0;
+            this.averageRating = 0.0;
+        } else {
+            double totalRating = (this.averageRating * this.reviewCount) - deletedRating;
+            this.reviewCount--;
+            this.averageRating = totalRating / this.reviewCount;
         }
     }
 }

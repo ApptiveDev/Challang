@@ -24,4 +24,10 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewRep
 
     // 술 id만 얻는 용도 => joinX
     List<Review> findByWriter(User user);
+
+    long countByWriter(User writer);
+
+    @Modifying
+    @Query("DELETE FROM Review r WHERE r.writer = :writer")
+    void deleteAllByWriter(@Param("writer") User writer);
 }

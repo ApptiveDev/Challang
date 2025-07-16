@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "LiquorTag", description = "주류-태그 연결 API")
@@ -23,6 +24,7 @@ public class LiquorTagController {
     private final LiquorTagService liquorTagService;
 
     @Operation(summary = "[관리자] 주류에 태그 추가", description = "특정 주류에 태그를 추가합니다.")
+    @PreAuthorize("hasRole('ADMIN')")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "주류 태그 추가 성공"),
             @ApiResponse(responseCode = "404", description = "해당 주류 또는 태그가 존재하지 않음"),
@@ -49,6 +51,7 @@ public class LiquorTagController {
     }
 
     @Operation(summary = "[관리자] 주류 태그 삭제", description = "주류에 연결된 특정 태그를 삭제합니다.")
+    @PreAuthorize("hasRole('ADMIN')")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "삭제 성공"),
             @ApiResponse(responseCode = "404", description = "해당 주류 또는 태그가 존재하지 않음")

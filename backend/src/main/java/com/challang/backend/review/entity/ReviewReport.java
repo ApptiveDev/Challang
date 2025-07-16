@@ -26,13 +26,13 @@ public class ReviewReport {
     @JoinColumn(name = "review_id")
     private Review review;
 
-    @Column(nullable = false)
-    private String reason; // 신고 사유
+//    @Column(nullable = false)
+//    private String reason; // 신고 사유
 
     @Builder
-    public ReviewReport(User user, Review review, String reason) {
+    public ReviewReport(User user, Review review) {
         this.user = user;
         this.review = review;
-        this.reason = reason;
+//        this.reason = reason;
     }
 }

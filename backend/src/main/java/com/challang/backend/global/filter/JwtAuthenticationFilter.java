@@ -50,41 +50,32 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        // TODO: 개발 완료 후 삭제 예정
-        if (true) {
-            filterChain.doFilter(request, response);
-            return;
-        }
+        final String token = jwtUtil.resolveToken(request);
 
-        try {
-            // 1. 토큰 추출
-            String token = jwtUtil.resolveToken(request);
+        if (token != null) {
+            try {
+                if (jwtUtil.validateToken(token) == VALID_JWT) {
+                    Long userId = jwtUtil.getId(token);
+                    UserDetails userDetails = userDetailsService.loadUserById(userId);
 
-            // 2. 토큰 유효성 검증
-            if (jwtUtil.validateToken(token) == VALID_JWT) {
-                // 3. redis에 저장된 토큰과 비교
-                String jti = jwtUtil.getJti(token);
-                String storedToken = redisUtil.getData(jti);
-                if (storedToken == null || !storedToken.equals(token)) {
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "유효하지 않은 토큰입니다.");
-                    return;
+                    UsernamePasswordAuthenticationToken auth =
+                            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
+                    auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(auth);
                 }
-
-                /// 4. 인증 정보 등록
-                Long userId = jwtUtil.getId(token);
-                UserDetails userDetails = userDetailsService.loadUserById(userId);
-                UsernamePasswordAuthenticationToken auth =
-                        new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-                auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(auth);
+            } catch (ExpiredJwtException e) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("{\"error\": \"Expired JWT token\"}");
+                return; // 필터 체인 중단
+            } catch (Exception e) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("{\"error\": \"Invalid JWT token\"}");
+                return; // 필터 체인 중단
             }
-
-            filterChain.doFilter(request, response);
-        } catch (ExpiredJwtException e) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "JWT 토큰이 만료되었습니다.");
-        } catch (Exception e) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "유효하지 않은 JWT 토큰입니다.");
         }
+
+        filterChain.doFilter(request, response);
     }
 
 

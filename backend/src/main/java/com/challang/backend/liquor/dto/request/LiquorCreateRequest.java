@@ -19,9 +19,6 @@ public record LiquorCreateRequest(
         @NotBlank(message = "유래는 필수입니다. 간략한 술의 역사나 기원을 입력해주세요.")
         String origin,
 
-        @NotBlank(message = "색상은 필수입니다.")
-        String color,
-
         @NotNull(message = "최소 도수는 필수입니다.")
         Double minAbv,
 

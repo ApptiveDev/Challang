@@ -61,7 +61,6 @@ public class LiquorService {
                 .name(request.name())
                 .tastingNote(request.tastingNote())
                 .origin(request.origin())
-                .color(request.color())
                 .minAbv(request.minAbv())
                 .maxAbv(request.maxAbv())
                 .level(level)

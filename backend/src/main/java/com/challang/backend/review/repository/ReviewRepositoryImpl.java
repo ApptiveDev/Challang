@@ -29,6 +29,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
         // 데이터 조회 쿼리
         List<Review> content = queryFactory
                 .selectFrom(review)
+                .join(review.writer).fetchJoin()
                 .where(
                         liquorIdEq(liquorId),
                         tagsIn(tagIds)
