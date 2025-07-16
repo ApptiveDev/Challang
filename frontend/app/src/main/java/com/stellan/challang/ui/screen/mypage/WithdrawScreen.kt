@@ -38,14 +38,63 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.stellan.challang.ui.theme.PaperlogyFamily
+import androidx. compose. runtime. rememberCoroutineScope
+import com. stellan. challang. data. repository. AuthRepository
+import androidx. compose. ui. platform. LocalContext
+import androidx.compose.runtime.remember
+import kotlinx.coroutines.launch
+import android. util. Log
+import android. R. id. message
+import com. stellan. challang. ui. viewmodel. AuthViewModel
+import com.stellan.challang.ui.viewmodel.AuthViewModelFactory
+import com.stellan.challang.data.api.ApiClient
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx. navigation. compose. rememberNavController
+import kotlinx.coroutines.delay
+import com. stellan.challang.ui.viewmodel.UserViewModel
+import com.stellan.challang.data.repository.UserRepository
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx. compose. ui. graphics. RectangleShape
+import androidx. compose. foundation. interaction. MutableInteractionSource
+
+
 
 @Composable
 fun WithdrawScreen(onDone: () -> Unit) {
+    val authViewModel: AuthViewModel = viewModel(
+        factory = AuthViewModelFactory(ApiClient.api)
+    )
+    // Composable 내부에서 생성 (단일 화면용)
+    val navController = rememberNavController()
+
+    val context = LocalContext.current
+    val authRepository = remember { AuthRepository(context) }
+    val reasonsMap = mapOf(
+        "서비스 불만족" to 0,
+        "앱 오류" to 1,
+        "정보의 부족" to 2,
+        "다른 계정으로 재가입" to 3,
+        "기타" to 4
+    )
+
+    val userViewModel = remember { UserViewModel(UserRepository(ApiClient.userApi)) }
+
+    LaunchedEffect(Unit) {
+        userViewModel.fetchActivityCounts()
+    }
+
+    val activityCount by userViewModel.activityCount.collectAsState()
+
+
     var step by rememberSaveable { mutableIntStateOf(1) }
     var selectedReason by rememberSaveable { mutableStateOf<String?>(null) }
     var agree by rememberSaveable { mutableStateOf(false) }
     var showConfirmDialog by rememberSaveable { mutableStateOf(false) }
     var showDoneDialog by rememberSaveable { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
+
+
 
     if (step == 1) {
         Box(
@@ -86,6 +135,7 @@ fun WithdrawScreen(onDone: () -> Unit) {
                     "서비스 불만족", "앱 오류", "정보의 부족", "다른 계정으로 재가입", "기타"
                 )
 
+
                 Column(
                     modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(6.dp)
@@ -95,7 +145,13 @@ fun WithdrawScreen(onDone: () -> Unit) {
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clickable { selectedReason = reason }
+                                .clickable(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = null
+                                ) {
+                                    selectedReason = reason
+                                }
+
                                 .padding(vertical = 1.dp)
                         ) {
                             RadioButton(
@@ -157,7 +213,7 @@ fun WithdrawScreen(onDone: () -> Unit) {
                     .padding(horizontal = 32.dp, vertical = 16.dp)
             ) {
                 Text(
-                    text = "프로필 설정",
+                    text = "회원탈퇴",
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 25.dp, bottom = 6.dp),
@@ -197,7 +253,7 @@ fun WithdrawScreen(onDone: () -> Unit) {
                 ) {
                     Column(Modifier.padding(18.dp)) {
                         Text(
-                            "작성한 내 리뷰: 2건",
+                            text = "작성한 내 리뷰: ${activityCount?.writtenReviewCount ?: 0}건",
                             fontFamily = PaperlogyFamily,
                             fontSize = 16.sp,
                             color = Color.Black
@@ -213,7 +269,7 @@ fun WithdrawScreen(onDone: () -> Unit) {
                 ) {
                     Column(Modifier.padding(18.dp)) {
                         Text(
-                            "찜한 큐레이팅: 3건",
+                            text = "찜한 큐레이팅: ${activityCount?.likedCurationCount ?: 0}건",
                             fontFamily = PaperlogyFamily,
                             fontSize = 16.sp,
                             color = Color.Black
@@ -231,22 +287,23 @@ fun WithdrawScreen(onDone: () -> Unit) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.BottomCenter),
-                shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
+                shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp),
                 colors = CardDefaults.cardColors(containerColor = Color(0xFFDDF0F0))
             ) {
-                Spacer(modifier = Modifier.height(20.dp))
-                Column(modifier = Modifier.padding(20.dp)) {
+                Spacer(modifier = Modifier.height(15.dp))
+                Column(modifier = Modifier.padding(15.dp)) {
                     Text(
                         text = "탈퇴 시 계정 및 개인정보와 이용 기록이 모두 삭제되며\n" +
                                 "삭제된 데이터는 복구가 불가능합니다.\n" +
                                 "또한 연속적인 탈퇴 후 재가입 시 이용에\n 제한을 받을 수 있습니다.",
                         fontFamily = PaperlogyFamily,
-                        fontSize = 12.sp,
+                        fontSize = 14.sp,
                         color = Color.Black,
                         textAlign = TextAlign.Center,
+                        lineHeight = 14.sp,
                         modifier = Modifier.fillMaxWidth()
                     )
-                    Spacer(modifier = Modifier.height(20.dp))
+                    Spacer(modifier = Modifier.height(15.dp))
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Checkbox(checked = agree, onCheckedChange = { agree = it })
                         Spacer(Modifier.width(8.dp))
@@ -256,7 +313,7 @@ fun WithdrawScreen(onDone: () -> Unit) {
                             fontSize = 16.sp
                         )
                     }
-                    Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
                     Button(
                         onClick = { showConfirmDialog = true },
                         enabled = agree,
@@ -277,13 +334,31 @@ fun WithdrawScreen(onDone: () -> Unit) {
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }
-
             if (showConfirmDialog) {
                 WithdrawConfirmDialog(
                     onConfirm = {
                         showConfirmDialog = false
-                        showDoneDialog = true
-                        // TODO: 탈퇴 API 호출
+
+                        coroutineScope.launch {
+                            val reasonId = reasonsMap[selectedReason] ?: 1  // 기본값 1
+                            authViewModel.withdraw(
+                                reason = reasonId,
+                                onSuccess = {
+                                    showDoneDialog = true
+                                },
+                                onError = {
+                                    Log.e("WithdrawScreen", "회원탈퇴 실패: $message")
+                                },
+                                onUnauthorized = {
+                                    coroutineScope.launch {
+                                        delay(100) // 한 프레임 대기
+                                        navController.navigate("auth") {
+                                            popUpTo("main") { inclusive = true }
+                                        }
+                                    }
+                                }
+                            )
+                        }
                     },
                     onDismiss = { showConfirmDialog = false }
                 )
@@ -292,8 +367,9 @@ fun WithdrawScreen(onDone: () -> Unit) {
             if (showDoneDialog) {
                 WithdrawDoneDialog(
                     onAcknowledge = {
+//                        authRepository.clearTokens() // 토큰 삭제
+                        onDone() // 로그인 화면으로 이동
                         showDoneDialog = false
-                        onDone()
                     }
                 )
             }
@@ -308,10 +384,10 @@ fun WithdrawConfirmDialog(
 ) {
     Dialog(onDismissRequest = onDismiss) {
         Card(
-            shape = RoundedCornerShape(8.dp),
+            shape = RectangleShape,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp)
+                .padding(horizontal = 10.dp)
         ) {
             Column(
                 modifier = Modifier
@@ -347,7 +423,11 @@ fun WithdrawConfirmDialog(
                         modifier = Modifier
                             .weight(1f)
                             .background(Color(0xFFE0F2F1))
-                            .clickable { onDismiss() }
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null,
+                                onClick = onDismiss
+                            )
                             .padding(vertical = 16.dp),
                         contentAlignment = Alignment.Center
                     ) {
@@ -360,7 +440,11 @@ fun WithdrawConfirmDialog(
                         modifier = Modifier
                             .weight(1f)
                             .background(Color(0xFFB2DADA))
-                            .clickable { onConfirm() }
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null,
+                                onClick = onConfirm
+                            )
                             .padding(vertical = 16.dp),
                         contentAlignment = Alignment.Center
                     ) {
@@ -381,10 +465,10 @@ fun WithdrawDoneDialog(
 ) {
     Dialog(onDismissRequest = onAcknowledge) {
         Card(
-            shape = RoundedCornerShape(8.dp),
+            shape = RectangleShape,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp)
+                .padding(horizontal = 10.dp)
         ) {
             Column(
                 modifier = Modifier
@@ -420,7 +504,13 @@ fun WithdrawDoneDialog(
                         modifier = Modifier
                             .weight(1f)
                             .background(Color(0xFFB2DADA))
-                            .clickable { onAcknowledge() }
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null
+                            ) {
+                                onAcknowledge()
+                            }
+
                             .padding(vertical = 16.dp),
                         contentAlignment = Alignment.Center
                     ) {

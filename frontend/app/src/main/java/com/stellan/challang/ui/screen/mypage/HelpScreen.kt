@@ -17,6 +17,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.stellan.challang.ui.theme.PaperlogyFamily
+import androidx. compose. foundation. interaction. MutableInteractionSource
+import androidx. compose. runtime. remember
 
 @Composable
 fun HelpScreen(
@@ -24,38 +26,31 @@ fun HelpScreen(
     onTerms: () -> Unit
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 20.dp)
+        modifier = Modifier.fillMaxWidth()
     ) {
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(60.dp))
         Text(
             text = "도움말",
             fontFamily = PaperlogyFamily,
             fontSize = 24.sp,
             color = Color.Black,
-            modifier = Modifier.padding(bottom = 200.dp)
+            modifier = Modifier.padding(start = 24.dp, bottom = 200.dp)
         )
 
-        HelpItem(
-            text = "개인정보처리방침",
-            onClick = onPrivacy
-        )
+        HelpItem("개인정보처리방침", onPrivacy)
         HorizontalDivider(
             modifier = Modifier.fillMaxWidth(),
             thickness = 1.dp,
             color = Color(0xFFE3F0F0)
         )
-        HelpItem(
-            text = "서비스 이용약관",
-            onClick = onTerms
-        )
+        HelpItem("서비스 이용약관", onTerms)
         HorizontalDivider(
             modifier = Modifier.fillMaxWidth(),
             thickness = 1.dp,
             color = Color(0xFFE3F0F0)
         )
     }
+
 }
 
 @Composable
@@ -63,21 +58,26 @@ fun HelpItem(text: String, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(vertical = 20.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = onClick
+            )
+
+            .padding(horizontal = 24.dp, vertical = 25.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = text,
             fontFamily = PaperlogyFamily,
-            fontSize = 16.sp,
+            fontSize = 18.sp,
             color = Color.Black
         )
+        Spacer(modifier = Modifier.weight(1f))
         Text(
             text = ">",
             fontFamily = PaperlogyFamily,
-            fontSize = 16.sp,
+            fontSize = 18.sp,
             color = Color(0xFFADADAD)
         )
     }
