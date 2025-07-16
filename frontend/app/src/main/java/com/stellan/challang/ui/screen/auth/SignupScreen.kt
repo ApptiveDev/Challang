@@ -21,29 +21,55 @@ import androidx.compose.ui.unit.sp
 import com.stellan.challang.R
 import com.stellan.challang.ui.component.BirthdayPicker
 import java.util.*
-import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import java.time.LocalDate
 import androidx.compose.foundation.border
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.text.TextStyle
 import com.stellan.challang.ui.theme.PaperlogyFamily
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com. stellan. challang. ui. viewmodel. AuthViewModel
+import com.stellan.challang.ui.viewmodel.AuthViewModelFactory
+import com.stellan.challang.data.api.ApiClient
+import androidx. compose. ui. platform. LocalContext
+import android.widget.Toast
 
-private val adjectives   = listOf("청량한", "풍부한", "달콤한", "스파이시", "부드러운", "강렬한")
-private val alcoholNouns = listOf("소주", "맥주", "와인", "위스키", "칵테일", "전통주")
+
+private val adjectives = listOf(
+    "달콤한", "쌉쌀한", "상큼한", "씁쓸한", "톡 쏘는", "부드러운", "거친", "묵직한", "가벼운", "향긋한",
+    "구수한", "신선한", "오래된", "젊은", "드라이한", "스위트한", "라이트한", "헤비한", "깔끔한", "지저분한",
+    "탁한", "맑은", "황금빛의", "투명한", "붉은", "푸른", "녹색의", "은은한", "강렬한", "풍부한",
+    "섬세한", "복합적인", "단순한", "숙성된", "미숙한", "깊은", "얕은", "따뜻한", "시원한", "차가운",
+    "뜨거운", "쨍한", "눅진한", "상쾌한", "진한", "연한", "짜릿한", "자극적인", "독한", "순한",
+    "쌉쌀한", "비릿한", "쿰쿰한", "고소한", "매콤한", "끈적한", "씁쓸한", "달콤씁쓸한", "개운한", "흐릿한",
+    "밝은", "어두운", "반짝이는", "은빛의", "얼얼한", "알싸한", "톡톡 튀는", "아린", "텁텁한", "고풍스러운",
+    "현대적인", "클래식한", "이국적인", "친숙한", "대중적인", "고급스러운", "저렴한", "귀한", "희귀한", "흔한",
+    "독창적인", "전통적인", "혁신적인", "안정적인", "변화무쌍한", "균형 잡힌", "불균형한", "매력적인", "유혹적인", "중독적인",
+    "상징적인", "역사적인", "전설적인", "기념비적인", "평범한", "특별한", "활기찬", "차분한", "진지한", "경쾌한"
+)
+private val alcoholNouns = listOf(
+    "술", "와인", "맥주", "소주", "위스키", "럼", "진", "보드카", "브랜디", "리큐어",
+    "샴페인", "막걸리", "사케", "칵테일", "에일", "라거", "포트", "셰리", "당밀", "포도",
+    "보리", "쌀", "효모", "증류", "발효", "숙성", "오크통", "배럴", "증류소", "양조장",
+    "와이너리", "바", "펍", "선술집", "잔", "글라스", "병", "코르크", "라벨", "빈티지",
+    "아로마", "부케", "바디", "피니시", "타닌", "산도", "당도", "알코올", "도수", "원액",
+    "블렌딩", "싱글몰트", "그레인", "몰트", "증류기", "냉각수", "필터", "캐스크", "증류주", "양주",
+    "혼성주", "식전주", "식후주", "스피릿", "샷", "온더락", "하이볼", "칵테일잔", "오프너", "디캔터",
+    "코스터", "냅킨", "얼음", "탄산수", "토닉워터", "콜라", "주스", "시럽", "가니시", "올리브",
+    "레몬", "라임", "체리", "민트", "칵테일바", "바텐더", "소믈리에", "테이스팅", "시음", "페어링",
+    "안주", "숙취", "알코올중독", "간", "기분", "분위기", "파티", "축배", "유흥", "문화"
+)
+
 
 private fun generateRandomNickname(): String {
     val adj  = adjectives.random()
     val noun = alcoholNouns.random()
-    val num  = (1..999).random().toString().padStart(3, '0')
+    val num  = (1000..9999).random().toString().padStart(3, '0')
     return "$adj $noun $num"
 }
 
@@ -62,8 +88,14 @@ fun getKoreanAge(birthYear: Int, birthMonth: Int, birthDay: Int): Int {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignupScreen(
+    kakaoAccessToken: String,
     onSignupComplete: () -> Unit
 ) {
+    val context = LocalContext.current
+    val apiService = remember { ApiClient.api }
+    val factory = remember { AuthViewModelFactory(apiService) }
+    val viewModel: AuthViewModel = viewModel(factory = factory)
+
     var randomName by remember { mutableStateOf(generateRandomNickname()) }
     var gender by remember { mutableStateOf("남성") }
     val calendar = Calendar.getInstance().apply {
@@ -75,7 +107,7 @@ fun SignupScreen(
 
     val age = getKoreanAge(year, month, day)
 
-    var selectedProfileRes by remember { mutableIntStateOf(R.drawable.proflie_image_basic) }
+    var selectedProfileRes by remember { mutableIntStateOf(R.drawable.profile_image_basic) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
 
@@ -83,12 +115,7 @@ fun SignupScreen(
     val screenWidth = containerSize.width.dp
 
     val profileImages = listOf(
-        R.drawable.proflie_image_basic,
-        R.drawable.profile_image_1,
-        R.drawable.profile_image_2,
-        R.drawable.profile_image_3,
-        R.drawable.profile_image_4,
-        R.drawable.profile_image_5
+        R.drawable.profile_image_basic,
     )
     Box(
         modifier = Modifier
@@ -115,8 +142,7 @@ fun SignupScreen(
                 modifier = Modifier
                     .size(140.dp)
                     .align(Alignment.CenterHorizontally)
-                    .background(Color(0xFFEFEFEF), CircleShape)
-                    .clickable { showBottomSheet = true },
+                    .background(Color(0xFFDDF0F0), CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 Image(
@@ -127,68 +153,6 @@ fun SignupScreen(
                         .padding(20.dp),
                     contentScale = ContentScale.Crop
                 )
-            }
-            if (showBottomSheet) {
-                ModalBottomSheet(
-                    onDismissRequest = { showBottomSheet = false },
-                    sheetState = sheetState,
-                    containerColor = Color.White,
-                    tonalElevation = 4.dp,
-                    dragHandle = {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(28.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            HorizontalDivider(
-                                modifier = Modifier
-                                    .width(180.dp)
-                                    .clip(RoundedCornerShape(2.dp)),
-                                thickness = 5.dp,
-                                color = Color(0xFFD9D9D9)
-                            )
-                        }
-                    }
-                ) {
-                    Column(modifier = Modifier.fillMaxWidth().padding(20.dp)) {
-                        LazyRow(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(18.dp)
-                        ) {
-                            items(profileImages) { imageRes ->
-                                Box(
-                                    modifier = Modifier
-                                        .width(screenWidth * 0.22f)
-                                        .padding(top = 30.dp, bottom = 20.dp)
-                                        .aspectRatio(1f)
-                                        .clip(CircleShape)
-                                        .clickable {
-                                            selectedProfileRes = imageRes
-                                            showBottomSheet = false
-                                        }
-                                        .border(
-                                            1.dp,
-                                            if (selectedProfileRes == imageRes) Color(0xFF838383)
-                                            else Color.Transparent,
-                                            shape = CircleShape
-                                        ),
-                                    contentAlignment = Alignment.Center
-                                )
-                                {
-                                    Image(
-                                        painter = painterResource(imageRes),
-                                        contentDescription = null,
-                                        modifier = Modifier
-                                            .size(150.dp)
-                                            .clip(CircleShape),
-                                        contentScale = ContentScale.Crop
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
             }
             Spacer(modifier = Modifier.height(35.dp))
             Text("닉네임",
@@ -245,7 +209,10 @@ fun SignupScreen(
                         shape = MaterialTheme.shapes.extraSmall,
                         modifier = Modifier
                             .weight(1f)
-                            .clickable { gender = option }
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null // Ripple 효과 제거
+                            ) { gender = option }
                             .height(56.dp)
                     ) {
                         Text(
@@ -319,7 +286,24 @@ fun SignupScreen(
             ) {
                 Button(
                     onClick = {
-                        onSignupComplete()
+                        viewModel.kakaoSignup(
+                            kakaoAccessToken = kakaoAccessToken,
+                            nickname = randomName,
+                            gender = if (gender == "남성") 1 else 0,
+                            birthDate = String.format("%04d-%02d-%02d", year, month + 1, day),
+                            onSuccess = {
+                                onSignupComplete()
+                            },
+                            onError = { errorMsg ->
+                                Toast.makeText(context, errorMsg, Toast.LENGTH_SHORT).show()
+                            },
+                            onRetry = {
+                                randomName = generateRandomNickname()
+                                Toast.makeText(context, "닉네임이 중복되어 새로 생성했어요!", Toast.LENGTH_SHORT).show()
+                            }
+
+
+                        )
                     },
                     enabled = age >= 19,
                     colors = ButtonDefaults.buttonColors(
