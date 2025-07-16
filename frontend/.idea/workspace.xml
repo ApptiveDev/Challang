@@ -9,14 +9,11 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d1bc515f-00d0-4ded-8c42-b8f1834c1bd0" name="Changes" comment="색상 변경 로고 적용. 큐레이팅 가이드 이미지 오버레이.">
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/stellan/challang/ui/component/StarRating.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/stellan/challang/ui/component/StarRatingDecimal.kt" afterDir="false" />
+    <list default="true" id="d1bc515f-00d0-4ded-8c42-b8f1834c1bd0" name="Changes" comment="자세히보기 페이지 거의 완성. 별점 컴포넌트 수정 필요. 유저들의 픽 Row 구성해야함.">
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/stellan/challang/ui/component/SpeechBubble.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/stellan/challang/ui/component/SpeechBubble.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/stellan/challang/ui/screen/home/CuratingScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/stellan/challang/ui/screen/home/CuratingScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/stellan/challang/ui/component/StarRatingDecimal.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/stellan/challang/ui/component/StarRatingDecimal.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/stellan/challang/ui/screen/home/DrinkDetailScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/stellan/challang/ui/screen/home/DrinkDetailScreen.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -94,23 +91,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Android App.Challang.app.executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;ResourceManagerPrefKey.ResourceType&quot;: &quot;MIPMAP&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
-    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;com.google.services.firebase.aqiPopupShown&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;frontend/fivestark/curating&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/fivestark/AndroidStudioProjects/Challang/frontend&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;memory.settings&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Android App.Challang.app.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "ResourceManagerPrefKey.ResourceType": "DRAWABLE",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "com.google.services.firebase.aqiPopupShown": "true",
+    "git-widget-placeholder": "frontend/fivestark/curating",
+    "last_opened_file_path": "/Users/fivestark/AndroidStudioProjects/Challang/frontend",
+    "settings.editor.selected.configurable": "memory.settings"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="K2MoveDeclarationsDialog.RECENT_PACKAGE_KEY">
       <recent name="com.stellan.challang.ui.screen.auth" />
@@ -394,7 +391,15 @@
       <option name="project" value="LOCAL" />
       <updated>1752473824911</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="자세히보기 페이지 거의 완성. 별점 컴포넌트 수정 필요. 유저들의 픽 Row 구성해야함.">
+      <option name="closed" value="true" />
+      <created>1752578757679</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1752578757679</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -444,7 +449,8 @@
     <MESSAGE value="main 화면에서 바텀네비게이션 진입 후 스택 진행했을때 아이콘 비활성화 되는 버그 수정." />
     <MESSAGE value="큐레이팅 가이드 스크린 이미지로 변경." />
     <MESSAGE value="색상 변경 로고 적용. 큐레이팅 가이드 이미지 오버레이." />
-    <option name="LAST_COMMIT_MESSAGE" value="색상 변경 로고 적용. 큐레이팅 가이드 이미지 오버레이." />
+    <MESSAGE value="자세히보기 페이지 거의 완성. 별점 컴포넌트 수정 필요. 유저들의 픽 Row 구성해야함." />
+    <option name="LAST_COMMIT_MESSAGE" value="자세히보기 페이지 거의 완성. 별점 컴포넌트 수정 필요. 유저들의 픽 Row 구성해야함." />
   </component>
   <component name="play_dynamic_filters_status">
     <option name="appIdToCheckInfo">

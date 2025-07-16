@@ -27,6 +27,8 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
+import androidx.compose.material3.SuggestionChip
+import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -44,11 +46,11 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.stellan.challang.R
-import com.stellan.challang.ui.component.StarRating
 import com.stellan.challang.ui.component.StarRatingDecimal
 import com.stellan.challang.ui.theme.PaperlogyFamily
 import kotlin.math.roundToInt
@@ -287,8 +289,44 @@ fun DrinkDetailScreen(
                             .fillMaxWidth()
                             .padding(horizontal = 25.dp, vertical = 5.dp)
                     ) {
-                        StarRatingDecimal(rating = 3.8f)
+                        StarRatingDecimal(rating = 3.6f)
+                        Row(
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 10.dp),
+                            horizontalArrangement = Arrangement.spacedBy(5.dp)
+                        ) {
+                            repeat(3) {
+                                SuggestionChip(
+                                    onClick = {},
+                                    label = { Text(
+                                        "바닐라향",
+                                        fontSize = 8.sp,
+                                        color = Color.Black,
+                                        textAlign = TextAlign.Center,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
+                                    ) },
+                                    border = BorderStroke(0.dp, Color.Transparent),
+                                    colors = SuggestionChipDefaults.suggestionChipColors(
+                                        containerColor = Color.White
+                                    ),
+                                    shape = RoundedCornerShape(9.dp),
+                                    modifier = Modifier
+                                        .height(18.dp)
+                                        .width(60.dp)
+                                )
+                            }
+                        }
                     }
+                    Text(
+                        "근본은 근본. 제일 만만한 입문자용 위스키",
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 11.sp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 25.dp, vertical = 5.dp)
+                    )
                 }
             }
             Spacer(Modifier.height(20.dp))
@@ -316,7 +354,48 @@ fun DrinkDetailScreen(
                             .height(140.dp)
                             .background(color = Color.White, shape = RoundedCornerShape(10.dp))
                     ) {
-
+                        Box(Modifier.padding(vertical = 15.dp)) {
+                            Image(
+                                painter = painterResource(R.drawable.ballantines_30_years_old),
+                                contentDescription = null,
+                                contentScale = ContentScale.FillHeight
+                            )
+                        }
+                        Column(Modifier.padding(top = 15.dp, bottom = 15.dp,)) {
+                            Text(
+                                "발렌타인 30년",
+                                fontSize = 18.sp
+                            )
+                            StarRatingDecimal(4.5f)
+                            Spacer(Modifier.height(12.dp))
+                            FlowRow(
+                                Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(5.dp),
+                                verticalArrangement = Arrangement.spacedBy(7.dp)
+                            ) {
+                                repeat(6) {
+                                    SuggestionChip(
+                                        onClick = {},
+                                        label = { Text(
+                                            "바닐라향",
+                                            fontSize = 9.sp,
+                                            color = Color.Black,
+                                            textAlign = TextAlign.Center,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis,
+                                        ) },
+                                        border = BorderStroke(0.dp, Color.Transparent),
+                                        colors = SuggestionChipDefaults.suggestionChipColors(
+                                            containerColor = Color(0xFFCEEFF2)
+                                        ),
+                                        shape = RoundedCornerShape(12.dp),
+                                        modifier = Modifier
+                                            .height(24.dp)
+                                            .width(63.dp)
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }
