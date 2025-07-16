@@ -12,7 +12,8 @@ class ChallangApplication : Application() {
         TokenProvider.init(this)
 
         // 카카오 SDK 초기화
-        KakaoSdk.init(this, "aaa5bb328799e8ced32d4f1ad339abe1")
+        KakaoSdk.init(this, "")
+
     }
 }
 
