@@ -9,12 +9,11 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d1bc515f-00d0-4ded-8c42-b8f1834c1bd0" name="Changes" comment="자세히보기 페이지 거의 완성. 별점 컴포넌트 수정 필요. 유저들의 픽 Row 구성해야함.">
+    <list default="true" id="d1bc515f-00d0-4ded-8c42-b8f1834c1bd0" name="Changes" comment="자세히 보기 페이지 완성. 별 평점 컴포넌트 완성.">
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/stellan/challang/ui/component/StarRatingDecimal.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/stellan/challang/ui/component/StarRatingDecimal.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/stellan/challang/ui/screen/home/DrinkDetailScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/stellan/challang/ui/screen/home/DrinkDetailScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/stellan/challang/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/stellan/challang/MainActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/stellan/challang/ui/screen/home/CuratingScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/stellan/challang/ui/screen/home/CuratingScreen.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -399,7 +398,15 @@
       <option name="project" value="LOCAL" />
       <updated>1752578757679</updated>
     </task>
-    <option name="localTasksCounter" value="26" />
+    <task id="LOCAL-00026" summary="자세히 보기 페이지 완성. 별 평점 컴포넌트 완성.">
+      <option name="closed" value="true" />
+      <created>1752654581721</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1752654581721</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -450,7 +457,8 @@
     <MESSAGE value="큐레이팅 가이드 스크린 이미지로 변경." />
     <MESSAGE value="색상 변경 로고 적용. 큐레이팅 가이드 이미지 오버레이." />
     <MESSAGE value="자세히보기 페이지 거의 완성. 별점 컴포넌트 수정 필요. 유저들의 픽 Row 구성해야함." />
-    <option name="LAST_COMMIT_MESSAGE" value="자세히보기 페이지 거의 완성. 별점 컴포넌트 수정 필요. 유저들의 픽 Row 구성해야함." />
+    <MESSAGE value="자세히 보기 페이지 완성. 별 평점 컴포넌트 완성." />
+    <option name="LAST_COMMIT_MESSAGE" value="자세히 보기 페이지 완성. 별 평점 컴포넌트 완성." />
   </component>
   <component name="play_dynamic_filters_status">
     <option name="appIdToCheckInfo">

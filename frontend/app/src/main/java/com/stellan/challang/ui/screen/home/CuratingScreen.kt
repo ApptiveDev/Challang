@@ -1,8 +1,11 @@
 package com.stellan.challang.ui.screen.home
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +14,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
@@ -47,11 +51,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.stellan.challang.R
@@ -61,6 +67,7 @@ import com.stellan.challang.saveSearchQuery
 import com.stellan.challang.setGuideShown
 import com.stellan.challang.ui.theme.PaperlogyFamily
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -74,7 +81,7 @@ fun CuratingScreen(onDetail: (drinkID: String) -> Unit) {
     val recentSearches by rememberRecentSearches()
 
     val hasSeenGuide by context.hasSeenGuideFlow().collectAsState(initial = false)
-    var showGuide by remember { mutableStateOf(!hasSeenGuide) }
+    val showGuide = !hasSeenGuide
 
     Box(Modifier.fillMaxSize()) {
         Column (Modifier.fillMaxSize()) {
@@ -196,100 +203,178 @@ fun CuratingScreen(onDetail: (drinkID: String) -> Unit) {
                 }
             }
 
-            Card(
-                Modifier
-                    .fillMaxSize()
-                    .padding(27.dp)
-                    .background(
-                        brush = Brush.verticalGradient(
-                            colors = listOf(Color(0xFF6CD0D8), Color.White)
-                        ),
-                        shape = RoundedCornerShape(24.dp)
-                    ),
-                colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-                shape = RoundedCornerShape(24.dp),
-            ) {
-                Box(Modifier.fillMaxSize()) {
-                    Image(
-                        painter = painterResource(R.drawable.balvenie),
-                        contentDescription = null,
-                        contentScale = ContentScale.FillWidth,
-                        modifier = Modifier.fillMaxWidth().padding(top = 40.dp)
-                    )
+            var currentIndex by remember { mutableIntStateOf(0) }
+            var history by remember { mutableStateOf(listOf<Int>()) }
 
-                    Column(
-                        modifier = Modifier
-                            .align(Alignment.TopStart)
-                            .padding(top = 40.dp, start = 24.dp)
-                    ) {
-                        Text(
-                            text = "발베니",
-                            fontFamily = PaperlogyFamily,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 34.sp,
-                            color = Color.White
-                        )
-                        Text(
-                            text = "40%",
-                            fontFamily = PaperlogyFamily,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 34.sp,
-                            color = Color.White
-                        )
-                        Text(
-                            text = "고도수",
-                            fontFamily = PaperlogyFamily,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 34.sp,
-                            color = Color.White
-                        )
-                    }
+            val dummy = listOf("발베니", "발렌타인 30년")
 
-                    Row(
-                        modifier = Modifier
-                            .align(Alignment.BottomStart)
-                            .fillMaxWidth()
-                            .padding(bottom = 15.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Spacer(modifier = Modifier.weight(1f))
-                        Box(
-                            modifier = Modifier.weight(1.3f),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            TextButton(
-                                onClick = { onDetail("1") },
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color(0xFF98DFE5)
+            Box(Modifier.fillMaxSize()) {
+                dummy.forEachIndexed { idx, item ->
+                    if (idx < currentIndex || idx > currentIndex + 1) return@forEachIndexed
+
+                    val offsetX = remember { Animatable(0f) }
+                    val offsetY = remember { Animatable(0f) }
+
+                    Card(
+                        Modifier
+                            .fillMaxSize()
+                            .padding(27.dp)
+                            .offset { IntOffset(offsetX.value.roundToInt(),
+                                offsetY.value.roundToInt()) }
+                            .background(
+                                brush = Brush.verticalGradient(
+                                    colors = listOf(Color(0xFF6CD0D8), Color.White)
                                 ),
-                                modifier = Modifier.size(width = 180.dp, height = 40.dp)
+                                shape = RoundedCornerShape(24.dp)
+                            )
+                            .pointerInput(currentIndex) {
+                                detectDragGestures(
+                                    onDragEnd = {
+                                        val threshold = size.width * 0.5f
+                                        when {
+                                            offsetY.value > threshold -> {
+                                                history = history + currentIndex
+                                                currentIndex = (currentIndex + 1)
+                                                    .coerceAtMost(dummy.lastIndex)
+                                                scope.launch {
+                                                    offsetX.snapTo(0f)
+                                                    offsetY.snapTo(0f)
+                                                }
+                                            }
+                                            offsetY.value < -threshold -> {
+                                                if (history.isNotEmpty()) {
+                                                    currentIndex = history.last()
+                                                    history = history.dropLast(1)
+                                                }
+                                                scope.launch {
+                                                    offsetX.snapTo(0f)
+                                                    offsetY.snapTo(0f)
+                                                }
+                                            }
+                                            offsetX.value > threshold -> {
+                                                history = history + currentIndex
+                                                currentIndex = (currentIndex + 1)
+                                                    .coerceAtMost(dummy.lastIndex)
+                                                scope.launch {
+                                                    offsetX.snapTo(0f)
+                                                    offsetY.snapTo(0f)
+                                                }
+                                            }
+                                            offsetX.value < -threshold -> {
+                                                history = history + currentIndex
+                                                currentIndex = (currentIndex + 1)
+                                                    .coerceAtMost(dummy.lastIndex)
+                                                scope.launch {
+                                                    offsetX.snapTo(0f)
+                                                    offsetY.snapTo(0f)
+                                                }
+                                            }
+                                            else -> {
+                                                scope.launch {
+                                                    offsetX.animateTo(0f,
+                                                        tween(300))
+                                                    offsetY.animateTo(0f,
+                                                        tween(300))
+                                                }
+                                            }
+                                        }
+                                    },
+                                    onDrag = { change, dragAmount ->
+                                        change.consume()
+                                        scope.launch {
+                                            offsetX.snapTo(offsetX.value + dragAmount.x)
+                                            offsetY.snapTo(offsetY.value + dragAmount.y)
+                                        }
+                                    }
+                                )
+                            },
+                        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+                        shape = RoundedCornerShape(24.dp),
+                    ) {
+                        Box(Modifier.fillMaxSize()) {
+                            Image(
+                                painter = painterResource(R.drawable.balvenie),
+                                contentDescription = null,
+                                contentScale = ContentScale.FillWidth,
+                                modifier = Modifier.fillMaxSize(),
+                                alignment = Alignment.Center
+                            )
+
+                            Column(
+                                modifier = Modifier
+                                    .align(Alignment.TopStart)
+                                    .padding(top = 40.dp, start = 24.dp)
                             ) {
                                 Text(
-                                    "자세히 보기",
+                                    text = dummy[currentIndex],
                                     fontFamily = PaperlogyFamily,
                                     fontWeight = FontWeight.Bold,
-                                    fontSize = 18.sp,
+                                    fontSize = 34.sp,
+                                    color = Color.White
+                                )
+                                Text(
+                                    text = "40%",
+                                    fontFamily = PaperlogyFamily,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 34.sp,
+                                    color = Color.White
+                                )
+                                Text(
+                                    text = "고도수",
+                                    fontFamily = PaperlogyFamily,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 34.sp,
                                     color = Color.White
                                 )
                             }
-                        }
-                        Row(
-                            modifier = Modifier.weight(1f),
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            IconButton(onClick = { /* 공유 */ }) {
-                                Icon(Icons.Outlined.Share,
-                                    contentDescription = "공유하기",
-                                    tint = Color(0xFF6CD0D8),
-                                    modifier = Modifier
-                                        .size(35.dp))
-                            }
-                            IconButton(onClick = { /* 다운로드 */ }) {
-                                Icon(Icons.Default.Download,
-                                    contentDescription = "다운로드",
-                                    tint = Color(0xFF6CD0D8),
-                                    modifier = Modifier
-                                        .size(35.dp))
+
+                            Row(
+                                modifier = Modifier
+                                    .align(Alignment.BottomStart)
+                                    .fillMaxWidth()
+                                    .padding(bottom = 15.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Spacer(modifier = Modifier.weight(1f))
+                                Box(
+                                    modifier = Modifier.weight(1.3f),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    TextButton(
+                                        onClick = { onDetail("1") },
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = Color(0xFF98DFE5)
+                                        ),
+                                        modifier = Modifier.size(width = 180.dp, height = 40.dp)
+                                    ) {
+                                        Text(
+                                            "자세히 보기",
+                                            fontFamily = PaperlogyFamily,
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 18.sp,
+                                            color = Color.White
+                                        )
+                                    }
+                                }
+                                Row(
+                                    modifier = Modifier.weight(1f),
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    IconButton(onClick = { /* 공유 */ }) {
+                                        Icon(Icons.Outlined.Share,
+                                            contentDescription = "공유하기",
+                                            tint = Color(0xFF6CD0D8),
+                                            modifier = Modifier
+                                                .size(35.dp))
+                                    }
+                                    IconButton(onClick = { /* 다운로드 */ }) {
+                                        Icon(Icons.Default.Download,
+                                            contentDescription = "다운로드",
+                                            tint = Color(0xFF6CD0D8),
+                                            modifier = Modifier
+                                                .size(35.dp))
+                                    }
+                                }
                             }
                         }
                     }
@@ -307,8 +392,7 @@ fun CuratingScreen(onDetail: (drinkID: String) -> Unit) {
                     .clickable {
                         if (step == 1) step = 2
                         else {
-                            showGuide = false
-                            // scope.launch { context.setGuideShown() }
+                            scope.launch { context.setGuideShown() }
                         }
                     }
             ) {
