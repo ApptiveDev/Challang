@@ -32,7 +32,7 @@ import com.stellan.challang.ui.viewmodel.AuthViewModelFactory
 @Composable
 fun LoginScreen(
     navController: NavHostController,
-    onLoginSuccess: (Boolean, String) -> Unit,
+    onLoginSuccess: (Boolean, String, Boolean) -> Unit,
     onNeedSignup: (String) -> Unit
 ) {
     val context = LocalContext.current
@@ -99,8 +99,8 @@ fun LoginScreen(
                                     coroutineScope.launch {
                                         viewModel.kakaoLogin(
                                             kakaoAccessToken = kakaoAccessToken,
-                                            onSuccess = { isNewUser ->
-                                                onLoginSuccess(isNewUser, kakaoAccessToken)  // ✅ 토큰도 같이 넘김
+                                            onSuccess = { isNewUser, isPreferenceSet ->
+                                                onLoginSuccess(isNewUser, kakaoAccessToken, isPreferenceSet)  // ✅ 토큰도 같이 넘김
                                             },
                                             onNeedSignup = {
                                                 onNeedSignup(kakaoAccessToken)
