@@ -14,6 +14,8 @@ import org.springframework.stereotype.Repository;
 public interface LiquorPreferenceLevelRepository extends JpaRepository<LiquorPreferenceLevel, Long> {
     List<LiquorPreferenceLevel> findByUser(User user);
 
+    boolean existsByUser(User user);
+
     @Modifying
     @Query("DELETE FROM LiquorPreferenceLevel lpl WHERE lpl.user = :user")
     void deleteAllByUser(@Param("user") User user);
