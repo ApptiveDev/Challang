@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface LiquorPreferenceTagRepository extends JpaRepository<LiquorPreferenceTag, Long> {
     boolean existsByUserAndTag(User user, Tag tag);
-
+    boolean existsByUser(User user);
     List<LiquorPreferenceTag> findByUser(User user);
 
     @Modifying

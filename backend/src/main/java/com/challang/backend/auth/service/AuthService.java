@@ -6,6 +6,9 @@ import com.challang.backend.auth.jwt.CustomUserDetails;
 import com.challang.backend.auth.jwt.JwtUtil;
 import com.challang.backend.global.exception.BaseException;
 import com.challang.backend.global.util.RedisUtil;
+import com.challang.backend.preference.repository.LiquorPreferenceLevelRepository;
+import com.challang.backend.preference.repository.LiquorPreferenceTagRepository;
+import com.challang.backend.preference.repository.LiquorPreferenceTypeRepository;
 import com.challang.backend.user.entity.User;
 import com.challang.backend.user.exception.UserErrorCode;
 import com.challang.backend.user.repository.UserRepository;
@@ -47,54 +50,56 @@ public class AuthService {
     private final UserService userService;
 
     private final WithdrawalReasonRepository withdrawalReasonRepository;
+    private final LiquorPreferenceLevelRepository preferenceLevelRepository;
+    private final LiquorPreferenceTypeRepository preferenceTypeRepository;
+    private final LiquorPreferenceTagRepository preferenceTagRepository;
 
     @Value("${jwt.refresh-expired-time}")
     private long refreshExpiredSeconds;
 
-
     // 이메일 회원가입
-    public boolean emailSignUp(EmailSignUpRequestDto dto) {
-        validateAdult(dto.birthDate());
-
-        if (existsByEmail(dto.email())) {
-            throw new BaseException(UserErrorCode.USER_ALREADY_EXISTS);
-        }
-
-        String encodedPassword = passwordEncoder.encode(dto.password());
-
-        User user = User.createWithEmail(
-                dto.email(),
-                encodedPassword,
-                dto.nickname(),
-                dto.birthDate(),
-                dto.gender(),
-                dto.role()
-        );
-
-        userRepository.save(user);
-
-        return true;
-    }
-
-    // 이메일 로그인
-    @Transactional
-    public TokenResponse emailSignIn(EmailSignInRequestDto dto) {
-        // 인증
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(dto.email(), dto.password()));
-
-        // 토큰 생성
-        String accessToken = jwtUtil.createAccessToken(authentication);
-        String refreshToken = jwtUtil.createRefreshToken(authentication);
-
-        // 리프레시 토큰의 jti 추출
-        String jti = jwtUtil.getJti(refreshToken);
-
-        // redis에 저장
-        redisUtil.setDataExpire(jti, refreshToken, refreshExpiredSeconds);
-
-        return new TokenResponse(accessToken, refreshToken);
-    }
+//    public boolean emailSignUp(EmailSignUpRequestDto dto) {
+//        validateAdult(dto.birthDate());
+//
+//        if (existsByEmail(dto.email())) {
+//            throw new BaseException(UserErrorCode.USER_ALREADY_EXISTS);
+//        }
+//
+//        String encodedPassword = passwordEncoder.encode(dto.password());
+//
+//        User user = User.createWithEmail(
+//                dto.email(),
+//                encodedPassword,
+//                dto.nickname(),
+//                dto.birthDate(),
+//                dto.gender(),
+//                dto.role()
+//        );
+//
+//        userRepository.save(user);
+//
+//        return true;
+//    }
+//
+//    // 이메일 로그인
+//    @Transactional
+//    public TokenResponse emailSignIn(EmailSignInRequestDto dto) {
+//        // 인증
+//        Authentication authentication = authenticationManager.authenticate(
+//                new UsernamePasswordAuthenticationToken(dto.email(), dto.password()));
+//
+//        // 토큰 생성
+//        String accessToken = jwtUtil.createAccessToken(authentication);
+//        String refreshToken = jwtUtil.createRefreshToken(authentication);
+//
+//        // 리프레시 토큰의 jti 추출
+//        String jti = jwtUtil.getJti(refreshToken);
+//
+//        // redis에 저장
+//        redisUtil.setDataExpire(jti, refreshToken, refreshExpiredSeconds);
+//
+//        return new TokenResponse(accessToken, refreshToken);
+//    }
 
     public boolean kakaoSignUp(KakaoSignUpRequestDto dto) {
         // 성인인지 확인
@@ -144,7 +149,13 @@ public class AuthService {
         String jti = jwtUtil.getJti(refreshJwt);
         redisUtil.setDataExpire(jti, refreshJwt, refreshExpiredSeconds);
 
-        return new TokenResponse(accessJwt, refreshJwt);
+        // 6. 선호 설정 여부 확인
+        boolean isPreferenceSet =
+                preferenceLevelRepository.existsByUser(user)
+                        && preferenceTypeRepository.existsByUser(user)
+                        && preferenceTagRepository.existsByUser(user);
+
+        return new TokenResponse(accessJwt, refreshJwt, isPreferenceSet);
     }
 
     public TokenResponse reissueTokens(HttpServletRequest request) {
