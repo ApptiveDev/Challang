@@ -9,11 +9,11 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d1bc515f-00d0-4ded-8c42-b8f1834c1bd0" name="Changes" comment="큐레이팅 카드 스와이프 구현중. 카드 리스트를 먼저 쭉 까는거 부터 구현해야함.">
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
+    <list default="true" id="d1bc515f-00d0-4ded-8c42-b8f1834c1bd0" name="Changes" comment="스와이프 일단 마무리.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/stellan/challang/ui/screen/home/CuratingScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/stellan/challang/ui/screen/home/CuratingScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle/libs.versions.toml" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/libs.versions.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/local.properties" beforeDir="false" afterPath="$PROJECT_DIR$/local.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,6 +45,9 @@
         </projects_view>
       </state>
     </system>
+  </component>
+  <component name="Git.Rebase.Settings">
+    <option name="NEW_BASE" value="origin/main" />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
@@ -414,7 +417,15 @@
       <option name="project" value="LOCAL" />
       <updated>1752662714191</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="스와이프 일단 마무리.">
+      <option name="closed" value="true" />
+      <created>1752742459412</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1752742459412</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -441,7 +452,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="HomeScreen.kt: bottomNavigation icon 변경. top search 추가." />
     <MESSAGE value="버전 업데이트" />
     <MESSAGE value="MyPageScreen.kt: Divider -&gt; HorizontalDivider, HomeScreen.kt: 검색바가 홈에서만 나오도록 바꿈. 검색바 디자인" />
     <MESSAGE value="Search 기능 하단 네비바로 분류. 큐레이팅 페이지 별개의 스크린으로 분리. 아카이브 스크린 추가. 폴더명 s제거. ProfileSettingScreen.kt으로 이름 변경.&#10;&#10;AppNavHost.kt에서 mypage에 관련된 라우팅 분리 할지 고려. 프로필세팅 파일 분리 고려." />
@@ -466,19 +476,20 @@
     <MESSAGE value="자세히보기 페이지 거의 완성. 별점 컴포넌트 수정 필요. 유저들의 픽 Row 구성해야함." />
     <MESSAGE value="자세히 보기 페이지 완성. 별 평점 컴포넌트 완성." />
     <MESSAGE value="큐레이팅 카드 스와이프 구현중. 카드 리스트를 먼저 쭉 까는거 부터 구현해야함." />
-    <option name="LAST_COMMIT_MESSAGE" value="큐레이팅 카드 스와이프 구현중. 카드 리스트를 먼저 쭉 까는거 부터 구현해야함." />
+    <MESSAGE value="스와이프 일단 마무리." />
+    <option name="LAST_COMMIT_MESSAGE" value="스와이프 일단 마무리." />
   </component>
   <component name="play_dynamic_filters_status">
     <option name="appIdToCheckInfo">
       <map>
         <entry key="com.stellan.challang">
           <value>
-            <CheckInfo lastCheckTimestamp="1752472199878" />
+            <CheckInfo lastCheckTimestamp="1752743364073" />
           </value>
         </entry>
         <entry key="com.stellan.challang.test">
           <value>
-            <CheckInfo lastCheckTimestamp="1752472199880" />
+            <CheckInfo lastCheckTimestamp="1752743364090" />
           </value>
         </entry>
       </map>
