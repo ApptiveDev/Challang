@@ -1,95 +1,126 @@
 package com.stellan.challang.ui.screen.archive
 
-import androidx.compose.foundation.clickable
+import com.stellan.challang.R
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
-import androidx.compose.material3.SearchBar
-import androidx.compose.material3.SearchBarDefaults
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.semantics.isTraversalGroup
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.traversalIndex
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ArchiveScreen() {
-    var text by rememberSaveable { mutableStateOf("") }
-    var expanded by rememberSaveable { mutableStateOf(false) }
+    var query by rememberSaveable { mutableStateOf("") }
 
-    Box(Modifier.fillMaxSize().semantics { isTraversalGroup = true }) {
-        SearchBar(
-            modifier = Modifier.align(Alignment.TopCenter).semantics { traversalIndex = 0f },
-            inputField = {
-                SearchBarDefaults.InputField(
-                    query = text,
-                    onQueryChange = { text = it },
-                    onSearch = { expanded = false },
-                    expanded = expanded,
-                    onExpandedChange = { expanded = it },
-                    placeholder = { Text("Hinted search text") },
-                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-                    trailingIcon = { Icon(Icons.Default.MoreVert, contentDescription = null) },
-                )
-            },
-            expanded = expanded,
-            onExpandedChange = { expanded = it },
+    Column(
+        Modifier
+            .fillMaxSize()
+            .padding(horizontal = 26.dp, vertical = 32.dp)
+    ) {
+        TextField(
+            modifier = Modifier.fillMaxWidth(),
+            value = query,
+            onValueChange = { query = it },
+            singleLine = true,
+            trailingIcon = { Icon(
+                imageVector = Icons.Default.Search,
+                contentDescription = null,
+                modifier = Modifier.offset(x = (-3).dp)
+            ) },
+            shape = RoundedCornerShape(12.dp),
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color(0xFFCEEFF2),
+                unfocusedContainerColor = Color(0xFFCEEFF2),
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+            )
+        )
+        Spacer(modifier = Modifier.height(30.dp))
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            horizontalArrangement = Arrangement.spacedBy(20.dp),
+            verticalArrangement = Arrangement.spacedBy(30.dp),
         ) {
-            Column(Modifier.verticalScroll(rememberScrollState())) {
-                repeat(4) { idx ->
-                    val resultText = "Suggestion $idx"
-                    ListItem(
-                        headlineContent = { Text(resultText) },
-                        supportingContent = { Text("Additional info") },
-                        leadingContent = { Icon(Icons.Filled.Star, contentDescription = null) },
-                        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                        modifier =
-                            Modifier.clickable {
-                                text = resultText
-                                expanded = false
-                            }
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 4.dp)
-                    )
+            items(6) { drink ->
+                Card(
+                    shape = RoundedCornerShape(8.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color(0xFF95DDE2)
+                    ),
+                    modifier = Modifier.aspectRatio(1f)
+                ) {
+                    Box(Modifier.fillMaxSize()) {
+                        Image(
+                            painter = painterResource(R.drawable.balvenie),
+                            contentDescription = null,
+                            contentScale = ContentScale.Fit,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(20.dp)
+                        )
+                        Text(
+                            text = "발베니",
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 24.sp,
+                            modifier = Modifier
+                                .align(Alignment.TopStart)
+                                .padding(12.dp)
+                        )
+                        var clicked by remember { mutableStateOf(false) }
+                        val tint by animateColorAsState(
+                            targetValue = if (clicked) Color(0xFF6CD0D8)
+                            else Color(0xFFFF7B7B)
+                        )
+                        IconButton(
+                            onClick = {
+                                clicked = true
+                            },
+                            modifier = Modifier.align(Alignment.TopEnd)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Favorite,
+                                contentDescription = "좋아요",
+                                tint = tint,
+                                modifier = Modifier.size(32.dp)
+                            )
+                        }
+                    }
                 }
-            }
-        }
-
-        LazyColumn(
-            contentPadding = PaddingValues(start = 16.dp, top = 72.dp, end = 16.dp, bottom = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.semantics { traversalIndex = 1f },
-        ) {
-            val list = List(100) { "Text $it" }
-            items(count = list.size) {
-                Text(
-                    text = list[it],
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                )
             }
         }
     }

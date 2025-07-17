@@ -1,0 +1,498 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AndroidLayouts">
+    <shared>
+      <config />
+    </shared>
+  </component>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="d1bc515f-00d0-4ded-8c42-b8f1834c1bd0" name="Changes" comment="스와이프 일단 마무리.">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle/libs.versions.toml" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/libs.versions.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/local.properties" beforeDir="false" afterPath="$PROJECT_DIR$/local.properties" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=LocalEmulator, isTemplate=false, identifier=path=/Users/fivestark/.android/avd/Medium_Phone.avd)]" />
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="Challang" type="f1a62948:ProjectNode" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="Git.Rebase.Settings">
+    <option name="NEW_BASE" value="origin/main" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$/.." value="main" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;FiveStarK&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/ApptiveDev/Challang.git&quot;,
+    &quot;accountId&quot;: &quot;7c2089a5-0e03-4a42-bc89-d5f1de89c8a0&quot;
+  },
+  &quot;recentNewPullRequestHead&quot;: {
+    &quot;server&quot;: {
+      &quot;useHttp&quot;: false,
+      &quot;host&quot;: &quot;github.com&quot;,
+      &quot;port&quot;: null,
+      &quot;suffix&quot;: null
+    },
+    &quot;owner&quot;: &quot;ApptiveDev&quot;,
+    &quot;repository&quot;: &quot;Challang&quot;
+  }
+}</component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8
+}</component>
+  <component name="ProjectId" id="2xiACQF5AZSgpsRg785AOfsweuy" />
+  <component name="ProjectReloadState">
+    <option name="STATE" value="1" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Android App.Challang.app.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;ResourceManagerPrefKey.ResourceType&quot;: &quot;DRAWABLE&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;com.google.services.firebase.aqiPopupShown&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;frontend/fivestark/curating&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/fivestark/AndroidStudioProjects/Challang/frontend&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;memory.settings&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="K2MoveDeclarationsDialog.RECENT_PACKAGE_KEY">
+      <recent name="com.stellan.challang.ui.screen.auth" />
+      <recent name="com.stellan.challang.ui.screen.home" />
+      <recent name="com.stellan.challang.ui.screen.archive" />
+      <recent name="com.stellan.challang.ui.screen.mypage" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="Challang.app" type="AndroidRunConfigurationType" factoryName="Android App" activateToolWindowBeforeRun="false">
+      <module name="Challang.app" />
+      <option name="ANDROID_RUN_CONFIGURATION_SCHEMA_VERSION" value="1" />
+      <option name="DEPLOY" value="true" />
+      <option name="DEPLOY_APK_FROM_BUNDLE" value="false" />
+      <option name="DEPLOY_AS_INSTANT" value="false" />
+      <option name="ARTIFACT_NAME" value="" />
+      <option name="PM_INSTALL_OPTIONS" value="" />
+      <option name="ALL_USERS" value="false" />
+      <option name="ALWAYS_INSTALL_WITH_PM" value="false" />
+      <option name="ALLOW_ASSUME_VERIFIED" value="false" />
+      <option name="CLEAR_APP_STORAGE" value="false" />
+      <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
+      <option name="ACTIVITY_EXTRA_FLAGS" value="" />
+      <option name="MODE" value="default_activity" />
+      <option name="RESTORE_ENABLED" value="false" />
+      <option name="RESTORE_FILE" value="" />
+      <option name="RESTORE_FRESH_INSTALL_ONLY" value="false" />
+      <option name="CLEAR_LOGCAT" value="false" />
+      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
+      <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
+      <option name="SELECTED_CLOUD_MATRIX_CONFIGURATION_ID" value="-1" />
+      <option name="SELECTED_CLOUD_MATRIX_PROJECT_ID" value="" />
+      <option name="DEBUGGER_TYPE" value="Auto" />
+      <Auto>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+        <option name="ATTACH_ON_WAIT_FOR_DEBUGGER" value="false" />
+        <option name="DEBUG_SANDBOX_SDK" value="false" />
+      </Auto>
+      <Hybrid>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+        <option name="ATTACH_ON_WAIT_FOR_DEBUGGER" value="false" />
+        <option name="DEBUG_SANDBOX_SDK" value="false" />
+      </Hybrid>
+      <Java>
+        <option name="ATTACH_ON_WAIT_FOR_DEBUGGER" value="false" />
+        <option name="DEBUG_SANDBOX_SDK" value="false" />
+      </Java>
+      <Native>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+        <option name="ATTACH_ON_WAIT_FOR_DEBUGGER" value="false" />
+        <option name="DEBUG_SANDBOX_SDK" value="false" />
+      </Native>
+      <Profilers>
+        <option name="ADVANCED_PROFILING_ENABLED" value="false" />
+        <option name="STARTUP_PROFILING_ENABLED" value="false" />
+        <option name="STARTUP_CPU_PROFILING_ENABLED" value="false" />
+        <option name="STARTUP_CPU_PROFILING_CONFIGURATION_NAME" value="Java/Kotlin Method Sample (legacy)" />
+        <option name="STARTUP_NATIVE_MEMORY_PROFILING_ENABLED" value="false" />
+        <option name="NATIVE_MEMORY_SAMPLE_RATE_BYTES" value="2048" />
+      </Profilers>
+      <option name="DEEP_LINK" value="" />
+      <option name="ACTIVITY" value="" />
+      <option name="ACTIVITY_CLASS" value="" />
+      <option name="SEARCH_ACTIVITY_IN_GLOBAL_SCOPE" value="false" />
+      <option name="SKIP_ACTIVITY_VALIDATION" value="false" />
+      <method v="2">
+        <option name="Android.Gradle.BeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="d1bc515f-00d0-4ded-8c42-b8f1834c1bd0" name="Changes" comment="" />
+      <created>1748410410002</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1748410410002</updated>
+    </task>
+    <task id="LOCAL-00001" summary="SignupScreen.kt: birthdaypicker 완성. lazycolumn 이용. 닉네임 랜돔 생성 구현.">
+      <option name="closed" value="true" />
+      <created>1748419640986</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1748419640986</updated>
+    </task>
+    <task id="LOCAL-00002" summary="HomeScreen.kt: bottomNavigation icon 변경. top search 추가.">
+      <option name="closed" value="true" />
+      <created>1750319697720</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1750319697720</updated>
+    </task>
+    <task id="LOCAL-00003" summary="버전 업데이트">
+      <option name="closed" value="true" />
+      <created>1750319794077</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1750319794077</updated>
+    </task>
+    <task id="LOCAL-00004" summary="MyPageScreen.kt: Divider -&gt; HorizontalDivider, HomeScreen.kt: 검색바가 홈에서만 나오도록 바꿈. 검색바 디자인">
+      <option name="closed" value="true" />
+      <created>1750406762541</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1750406762541</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Search 기능 하단 네비바로 분류. 큐레이팅 페이지 별개의 스크린으로 분리. 아카이브 스크린 추가. 폴더명 s제거. ProfileSettingScreen.kt으로 이름 변경.&#10;&#10;AppNavHost.kt에서 mypage에 관련된 라우팅 분리 할지 고려. 프로필세팅 파일 분리 고려.">
+      <option name="closed" value="true" />
+      <created>1750835408657</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1750835408657</updated>
+    </task>
+    <task id="LOCAL-00006" summary="사용하지 않는 라이브러리 삭제">
+      <option name="closed" value="true" />
+      <created>1750835640994</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1750835640994</updated>
+    </task>
+    <task id="LOCAL-00007" summary="material3 searchbar test">
+      <option name="closed" value="true" />
+      <created>1751012110480</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1751012110480</updated>
+    </task>
+    <task id="LOCAL-00008" summary="navigation 정리. 파일 분리. 폴더 정리. 버전 업데이트.&#10;curating, archive 구현해야함.&#10;api 연결해야함.">
+      <option name="closed" value="true" />
+      <created>1751445865420</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1751445865420</updated>
+    </task>
+    <task id="LOCAL-00009" summary="붎필요 import 삭제">
+      <option name="closed" value="true" />
+      <created>1751446083390</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1751446083390</updated>
+    </task>
+    <task id="LOCAL-00010" summary="코틀린 버전 업데이트">
+      <option name="closed" value="true" />
+      <created>1751446402911</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1751446402911</updated>
+    </task>
+    <task id="LOCAL-00011" summary="curating 페이지 작업전 새로운 브랜치 생성 및 버전 업데이트">
+      <option name="closed" value="true" />
+      <created>1751520599976</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1751520599976</updated>
+    </task>
+    <task id="LOCAL-00012" summary="searchbar expanded 화면 작성(ing). type.kt 에 기본글꼴 설정.">
+      <option name="closed" value="true" />
+      <created>1751533598517</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1751533598517</updated>
+    </task>
+    <task id="LOCAL-00013" summary="searcbar expanded 상태 페이지 완성. 최근 검색어 기능 구현 에러 해결 중.">
+      <option name="closed" value="true" />
+      <created>1751613736768</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1751613736768</updated>
+    </task>
+    <task id="LOCAL-00014" summary="최근 검색어 기능 완료.">
+      <option name="closed" value="true" />
+      <created>1751953529246</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1751953529246</updated>
+    </task>
+    <task id="LOCAL-00015" summary="아카이브 스크린 완성">
+      <option name="closed" value="true" />
+      <created>1751966694497</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1751966694497</updated>
+    </task>
+    <task id="LOCAL-00016" summary="홈 큐레이팅 플로우 구성 스크린 등록.">
+      <option name="closed" value="true" />
+      <created>1752051546452</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1752051546452</updated>
+    </task>
+    <task id="LOCAL-00017" summary="큐레이팅 가이드 순서 잡는중.">
+      <option name="closed" value="true" />
+      <created>1752054777463</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1752054777463</updated>
+    </task>
+    <task id="LOCAL-00018" summary="큐레이팅 가이드 순서 완성">
+      <option name="closed" value="true" />
+      <created>1752129820871</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1752129820871</updated>
+    </task>
+    <task id="LOCAL-00019" summary="큐레이팅 스크린 구성 완성.">
+      <option name="closed" value="true" />
+      <created>1752136408179</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1752136408179</updated>
+    </task>
+    <task id="LOCAL-00020" summary="로그인화면 말풍선 크기조정.">
+      <option name="closed" value="true" />
+      <created>1752207610581</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1752207610581</updated>
+    </task>
+    <task id="LOCAL-00021" summary="main 화면에서 바텀네비게이션 진입 후 스택 진행했을때 아이콘 비활성화 되는 버그 수정.">
+      <option name="closed" value="true" />
+      <created>1752208672535</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1752208672535</updated>
+    </task>
+    <task id="LOCAL-00022" summary="큐레이팅 가이드 스크린 이미지로 변경.">
+      <option name="closed" value="true" />
+      <created>1752211558967</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1752211558967</updated>
+    </task>
+    <task id="LOCAL-00023" summary="큐레이팅 가이드 스크린 이미지로 변경.">
+      <option name="closed" value="true" />
+      <created>1752212431436</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1752212431436</updated>
+    </task>
+    <task id="LOCAL-00024" summary="색상 변경 로고 적용. 큐레이팅 가이드 이미지 오버레이.">
+      <option name="closed" value="true" />
+      <created>1752473824911</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1752473824911</updated>
+    </task>
+    <task id="LOCAL-00025" summary="자세히보기 페이지 거의 완성. 별점 컴포넌트 수정 필요. 유저들의 픽 Row 구성해야함.">
+      <option name="closed" value="true" />
+      <created>1752578757679</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1752578757679</updated>
+    </task>
+    <task id="LOCAL-00026" summary="자세히 보기 페이지 완성. 별 평점 컴포넌트 완성.">
+      <option name="closed" value="true" />
+      <created>1752654581721</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1752654581721</updated>
+    </task>
+    <task id="LOCAL-00027" summary="큐레이팅 카드 스와이프 구현중. 카드 리스트를 먼저 쭉 까는거 부터 구현해야함.">
+      <option name="closed" value="true" />
+      <created>1752662714191</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1752662714191</updated>
+    </task>
+    <task id="LOCAL-00028" summary="스와이프 일단 마무리.">
+      <option name="closed" value="true" />
+      <created>1752742459412</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1752742459412</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="main" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="버전 업데이트" />
+    <MESSAGE value="MyPageScreen.kt: Divider -&gt; HorizontalDivider, HomeScreen.kt: 검색바가 홈에서만 나오도록 바꿈. 검색바 디자인" />
+    <MESSAGE value="Search 기능 하단 네비바로 분류. 큐레이팅 페이지 별개의 스크린으로 분리. 아카이브 스크린 추가. 폴더명 s제거. ProfileSettingScreen.kt으로 이름 변경.&#10;&#10;AppNavHost.kt에서 mypage에 관련된 라우팅 분리 할지 고려. 프로필세팅 파일 분리 고려." />
+    <MESSAGE value="사용하지 않는 라이브러리 삭제" />
+    <MESSAGE value="material3 searchbar test" />
+    <MESSAGE value="navigation 정리. 파일 분리. 폴더 정리. 버전 업데이트.&#10;curating, archive 구현해야함.&#10;api 연결해야함." />
+    <MESSAGE value="붎필요 import 삭제" />
+    <MESSAGE value="코틀린 버전 업데이트" />
+    <MESSAGE value="curating 페이지 작업전 새로운 브랜치 생성 및 버전 업데이트" />
+    <MESSAGE value="searchbar expanded 화면 작성(ing). type.kt 에 기본글꼴 설정." />
+    <MESSAGE value="searcbar expanded 상태 페이지 완성. 최근 검색어 기능 구현 에러 해결 중." />
+    <MESSAGE value="최근 검색어 기능 완료." />
+    <MESSAGE value="아카이브 스크린 완성" />
+    <MESSAGE value="홈 큐레이팅 플로우 구성 스크린 등록." />
+    <MESSAGE value="큐레이팅 가이드 순서 잡는중." />
+    <MESSAGE value="큐레이팅 가이드 순서 완성" />
+    <MESSAGE value="큐레이팅 스크린 구성 완성." />
+    <MESSAGE value="로그인화면 말풍선 크기조정." />
+    <MESSAGE value="main 화면에서 바텀네비게이션 진입 후 스택 진행했을때 아이콘 비활성화 되는 버그 수정." />
+    <MESSAGE value="큐레이팅 가이드 스크린 이미지로 변경." />
+    <MESSAGE value="색상 변경 로고 적용. 큐레이팅 가이드 이미지 오버레이." />
+    <MESSAGE value="자세히보기 페이지 거의 완성. 별점 컴포넌트 수정 필요. 유저들의 픽 Row 구성해야함." />
+    <MESSAGE value="자세히 보기 페이지 완성. 별 평점 컴포넌트 완성." />
+    <MESSAGE value="큐레이팅 카드 스와이프 구현중. 카드 리스트를 먼저 쭉 까는거 부터 구현해야함." />
+    <MESSAGE value="스와이프 일단 마무리." />
+    <option name="LAST_COMMIT_MESSAGE" value="스와이프 일단 마무리." />
+  </component>
+  <component name="play_dynamic_filters_status">
+    <option name="appIdToCheckInfo">
+      <map>
+        <entry key="com.stellan.challang">
+          <value>
+            <CheckInfo lastCheckTimestamp="1752743364073" />
+          </value>
+        </entry>
+        <entry key="com.stellan.challang.test">
+          <value>
+            <CheckInfo lastCheckTimestamp="1752743364090" />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
