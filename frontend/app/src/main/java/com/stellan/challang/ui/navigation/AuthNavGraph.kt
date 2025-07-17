@@ -30,14 +30,20 @@ fun NavGraphBuilder.authNavGraph(navController: NavHostController) {
             }
             LoginScreen(
                 navController = navController,
-                onLoginSuccess = { isNewUser, kakaoAccessToken ->
+                onLoginSuccess = { isNewUser, kakaoAccessToken, isPreferenceSet ->
                     if (isNewUser) {
                         navController.navigate("signup?token=$kakaoAccessToken") {
                             popUpTo("login") { inclusive = true }
                         }
                     } else {
-                        navController.navigate("main") {
-                            popUpTo("auth") { inclusive = true }
+                        if (isPreferenceSet) {
+                            navController.navigate("main") {
+                                popUpTo("auth") { inclusive = true }
+                            }
+                        } else {
+                            navController.navigate("profilesetting") {
+                                popUpTo("auth") { inclusive = true }
+                            }
                         }
                     }
                 },
@@ -47,7 +53,6 @@ fun NavGraphBuilder.authNavGraph(navController: NavHostController) {
                     }
                 }
             )
-
 
 
         }

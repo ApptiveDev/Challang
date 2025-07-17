@@ -39,7 +39,7 @@ class AuthViewModel(
 
     fun kakaoLogin(
         kakaoAccessToken: String,
-        onSuccess: (Boolean) -> Unit,
+        onSuccess: (Boolean, Boolean) -> Unit,
         onNeedSignup: (String) -> Unit,
         onError: (String) -> Unit,
         onUnauthorized: (() -> Unit)? = null
@@ -70,7 +70,12 @@ class AuthViewModel(
                             TokenProvider.setAccessToken(tokens.accessToken)
                             TokenProvider.setRefreshToken(tokens.refreshToken)
                             _isLoggedIn.value = true
-                            onSuccess(false)
+                            val result = response.body()?.result
+                            if (result != null) {
+                                onSuccess(false, result.isPreferenceSet)
+                            } else {
+                                onError("서버 응답이 비어 있습니다.")
+                            }
                         } else {
                             Log.e("AuthViewModel", "토큰이 null이에요")
                             onError("응답이 비어 있어요")
@@ -79,7 +84,8 @@ class AuthViewModel(
 
                     404 -> {
                         Log.d("AuthViewModel", "404 - 회원가입이 필요해요")
-                        onNeedSignup(kakaoAccessToken)}
+                        onNeedSignup(kakaoAccessToken)
+                    }
 
                     else -> onError("로그인 실패: ${response.code()}")
                 }
@@ -144,7 +150,8 @@ class AuthViewModel(
                     // 닉네임 중복 체크
                     val errorBody = signupResponse.errorBody()?.string()
                     if (errorBody?.contains("닉네임", ignoreCase = true) == true &&
-                        errorBody.contains("중복", ignoreCase = true)) {
+                        errorBody.contains("중복", ignoreCase = true)
+                    ) {
                         onRetry?.invoke("DUPLICATED") // 콜백으로 UI에서 닉네임 재생성
                     } else {
                         onError("회원가입 실패: ${signupResponse.code()}")
@@ -228,9 +235,6 @@ class AuthViewModel(
             }
         }
     }
-
-
-
 
 
 }
