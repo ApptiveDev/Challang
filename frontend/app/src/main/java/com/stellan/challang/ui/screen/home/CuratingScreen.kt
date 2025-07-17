@@ -1,5 +1,6 @@
 package com.stellan.challang.ui.screen.home
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -49,6 +50,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
@@ -69,6 +71,7 @@ import com.stellan.challang.ui.theme.PaperlogyFamily
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
+@SuppressLint("MutableCollectionMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CuratingScreen(onDetail: (drinkID: String) -> Unit) {
@@ -203,10 +206,10 @@ fun CuratingScreen(onDetail: (drinkID: String) -> Unit) {
                 }
             }
 
+            val dummy = listOf("발베니", "발렌타인 30년", "짐빔", "조니워커 블루", "로얄샬루트 23년")
+
             var currentIndex by remember { mutableIntStateOf(0) }
             var history by remember { mutableStateOf(listOf<Int>()) }
-
-            val dummy = listOf("발베니", "발렌타인 30년")
 
             Box(Modifier.fillMaxSize()) {
                 dummy.forEachIndexed { idx, item ->
@@ -221,16 +224,10 @@ fun CuratingScreen(onDetail: (drinkID: String) -> Unit) {
                             .padding(27.dp)
                             .offset { IntOffset(offsetX.value.roundToInt(),
                                 offsetY.value.roundToInt()) }
-                            .background(
-                                brush = Brush.verticalGradient(
-                                    colors = listOf(Color(0xFF6CD0D8), Color.White)
-                                ),
-                                shape = RoundedCornerShape(24.dp)
-                            )
                             .pointerInput(currentIndex) {
                                 detectDragGestures(
                                     onDragEnd = {
-                                        val threshold = size.width * 0.5f
+                                        val threshold = size.height * 0.25f
                                         when {
                                             offsetY.value > threshold -> {
                                                 history = history + currentIndex
@@ -271,10 +268,8 @@ fun CuratingScreen(onDetail: (drinkID: String) -> Unit) {
                                             }
                                             else -> {
                                                 scope.launch {
-                                                    offsetX.animateTo(0f,
-                                                        tween(300))
-                                                    offsetY.animateTo(0f,
-                                                        tween(300))
+                                                    offsetX.animateTo(0f, tween(300))
+                                                    offsetY.animateTo(0f, tween(300))
                                                 }
                                             }
                                         }
@@ -287,13 +282,23 @@ fun CuratingScreen(onDetail: (drinkID: String) -> Unit) {
                                         }
                                     }
                                 )
-                            },
-                        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-                        shape = RoundedCornerShape(24.dp),
+                            }
+                            .shadow(
+                                elevation = 1.dp,
+                                shape = RoundedCornerShape(24.dp),
+                                clip = false
+                            )
+                            .background(
+                                brush = Brush.verticalGradient(
+                                    colors = listOf(Color(0xFF6CD0D8), Color.White)
+                                ),
+                                shape = RoundedCornerShape(24.dp)
+                            ),
+                        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
                     ) {
                         Box(Modifier.fillMaxSize()) {
                             Image(
-                                painter = painterResource(R.drawable.balvenie),
+                                painter = painterResource(R.drawable.ballantines_30_years_old),
                                 contentDescription = null,
                                 contentScale = ContentScale.FillWidth,
                                 modifier = Modifier.fillMaxSize(),
@@ -303,7 +308,7 @@ fun CuratingScreen(onDetail: (drinkID: String) -> Unit) {
                             Column(
                                 modifier = Modifier
                                     .align(Alignment.TopStart)
-                                    .padding(top = 40.dp, start = 24.dp)
+                                    .padding(top = 42.dp, start = 24.dp)
                             ) {
                                 Text(
                                     text = dummy[currentIndex],
@@ -332,7 +337,7 @@ fun CuratingScreen(onDetail: (drinkID: String) -> Unit) {
                                 modifier = Modifier
                                     .align(Alignment.BottomStart)
                                     .fillMaxWidth()
-                                    .padding(bottom = 15.dp),
+                                    .padding(bottom = 24.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Spacer(modifier = Modifier.weight(1f))
