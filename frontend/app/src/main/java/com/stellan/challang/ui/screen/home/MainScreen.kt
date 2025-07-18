@@ -21,6 +21,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -31,12 +32,16 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.stellan.challang.data.api.ApiClient
+import com.stellan.challang.data.repository.DrinkRepository
 import com.stellan.challang.ui.navigation.mainNavGraph
 import com.stellan.challang.ui.theme.PaperlogyFamily
+import com.stellan.challang.ui.viewmodel.DrinkViewModel
 
 @Composable
 fun MainScreen(rootNavController: NavHostController) {
     val bottomNavController = rememberNavController()
+    val drinkViewModel = remember { DrinkViewModel(DrinkRepository(ApiClient.drinkApi)) }
 
     Scaffold(
         bottomBar = { BottomBar(bottomNavController) }
@@ -57,7 +62,7 @@ fun MainScreen(rootNavController: NavHostController) {
                     navController  = bottomNavController,
                     startDestination = "home"
                 ) {
-                    mainNavGraph(rootNavController, bottomNavController)
+                    mainNavGraph(rootNavController, bottomNavController, drinkViewModel)
                 }
             }
             HorizontalDivider(

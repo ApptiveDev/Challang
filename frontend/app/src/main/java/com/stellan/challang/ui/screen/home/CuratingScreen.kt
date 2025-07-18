@@ -40,6 +40,7 @@ import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -62,19 +63,25 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.stellan.challang.R
+import com.stellan.challang.data.api.ApiClient
+import com.stellan.challang.data.model.drink.Drink
+import com.stellan.challang.data.repository.DrinkRepository
 import com.stellan.challang.hasSeenGuideFlow
 import com.stellan.challang.rememberRecentSearches
 import com.stellan.challang.saveSearchQuery
 import com.stellan.challang.setGuideShown
 import com.stellan.challang.ui.theme.PaperlogyFamily
+import com.stellan.challang.ui.util.formatAbv
+import com.stellan.challang.ui.viewmodel.DrinkViewModel
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 @SuppressLint("MutableCollectionMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CuratingScreen(onDetail: (drinkID: String) -> Unit) {
+fun CuratingScreen(onDetail: (drink: Drink) -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
@@ -86,8 +93,16 @@ fun CuratingScreen(onDetail: (drinkID: String) -> Unit) {
     val hasSeenGuide by context.hasSeenGuideFlow().collectAsState(initial = false)
     val showGuide = !hasSeenGuide
 
+    val drinkViewModel = remember { DrinkViewModel(DrinkRepository(ApiClient.drinkApi)) }
+    val drinks by drinkViewModel.drinks.collectAsState()
+
+    LaunchedEffect(Unit) {
+        drinkViewModel.fetchDrinks()
+    }
+
+
     Box(Modifier.fillMaxSize()) {
-        Column (Modifier.fillMaxSize()) {
+        Column(Modifier.fillMaxSize()) {
             SearchBar(
                 modifier = Modifier.align(Alignment.CenterHorizontally),
                 inputField = {
@@ -96,11 +111,16 @@ fun CuratingScreen(onDetail: (drinkID: String) -> Unit) {
                         onQueryChange = { text = it },
                         onSearch = {
                             scope.launch { saveSearchQuery(context, text) }
-                            expanded = false },
+                            expanded = false
+                        },
                         expanded = expanded,
                         onExpandedChange = { expanded = it },
-                        trailingIcon = { Icon(Icons.Default.Search,
-                            contentDescription = null) },
+                        trailingIcon = {
+                            Icon(
+                                Icons.Default.Search,
+                                contentDescription = null
+                            )
+                        },
                     )
                 },
                 expanded = expanded,
@@ -110,10 +130,13 @@ fun CuratingScreen(onDetail: (drinkID: String) -> Unit) {
                 ),
                 shape = RoundedCornerShape(12.dp),
             ) {
-                Column(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(25.dp)) {
-                    Text("최근 검색어",
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(25.dp)
+                ) {
+                    Text(
+                        "최근 검색어",
                         fontFamily = PaperlogyFamily,
                         fontWeight = FontWeight.SemiBold,
                     )
@@ -127,13 +150,15 @@ fun CuratingScreen(onDetail: (drinkID: String) -> Unit) {
                                     text = past
                                     expanded = false
                                 },
-                                label = { Text(
-                                    text = past,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 5.dp),
-                                    textAlign = TextAlign.Center
-                                ) },
+                                label = {
+                                    Text(
+                                        text = past,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 5.dp),
+                                        textAlign = TextAlign.Center
+                                    )
+                                },
                                 border = SuggestionChipDefaults.suggestionChipBorder(
                                     enabled = true,
                                     borderColor = Color.Transparent
@@ -145,7 +170,8 @@ fun CuratingScreen(onDetail: (drinkID: String) -> Unit) {
                         }
                     }
                     Spacer(modifier = Modifier.height(40.dp))
-                    Text("추천 키워드",
+                    Text(
+                        "추천 키워드",
                         fontFamily = PaperlogyFamily,
                         fontWeight = FontWeight.SemiBold,
                     )
@@ -156,13 +182,15 @@ fun CuratingScreen(onDetail: (drinkID: String) -> Unit) {
                         items(6) { iter ->
                             SuggestionChip(
                                 onClick = {},
-                                label = { Text(
-                                    "사랑해",
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 5.dp),
-                                    textAlign = TextAlign.Center
-                                ) },
+                                label = {
+                                    Text(
+                                        "사랑해",
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 5.dp),
+                                        textAlign = TextAlign.Center
+                                    )
+                                },
                                 border = SuggestionChipDefaults.suggestionChipBorder(
                                     enabled = true,
                                     borderColor = Color.Transparent
@@ -174,7 +202,8 @@ fun CuratingScreen(onDetail: (drinkID: String) -> Unit) {
                         }
                     }
                     Spacer(modifier = Modifier.height(40.dp))
-                    Text("실시간 인기 주류 순위",
+                    Text(
+                        "실시간 인기 주류 순위",
                         fontFamily = PaperlogyFamily,
                         fontWeight = FontWeight.SemiBold,
                     )
@@ -186,13 +215,15 @@ fun CuratingScreen(onDetail: (drinkID: String) -> Unit) {
                         items(8) { iter ->
                             SuggestionChip(
                                 onClick = {},
-                                label = { Text(
-                                    "사랑해",
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 5.dp),
-                                    textAlign = TextAlign.Center
-                                ) },
+                                label = {
+                                    Text(
+                                        "사랑해",
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 5.dp),
+                                        textAlign = TextAlign.Center
+                                    )
+                                },
                                 border = SuggestionChipDefaults.suggestionChipBorder(
                                     enabled = true,
                                     borderColor = Color.Transparent
@@ -206,13 +237,11 @@ fun CuratingScreen(onDetail: (drinkID: String) -> Unit) {
                 }
             }
 
-            val dummy = listOf("발베니", "발렌타인 30년", "짐빔", "조니워커 블루", "로얄샬루트 23년")
-
             var currentIndex by remember { mutableIntStateOf(0) }
             var history by remember { mutableStateOf(listOf<Int>()) }
 
             Box(Modifier.fillMaxSize()) {
-                dummy.forEachIndexed { idx, item ->
+                drinks.forEachIndexed { idx, drink ->
                     if (idx < currentIndex || idx > currentIndex + 1) return@forEachIndexed
 
                     val offsetX = remember { Animatable(0f) }
@@ -222,8 +251,12 @@ fun CuratingScreen(onDetail: (drinkID: String) -> Unit) {
                         Modifier
                             .fillMaxSize()
                             .padding(27.dp)
-                            .offset { IntOffset(offsetX.value.roundToInt(),
-                                offsetY.value.roundToInt()) }
+//                            .offset {
+//                                IntOffset(
+//                                    offsetX.value.roundToInt(),
+//                                    offsetY.value.roundToInt()
+//                                )
+//                            }
                             .pointerInput(currentIndex) {
                                 detectDragGestures(
                                     onDragEnd = {
@@ -232,12 +265,13 @@ fun CuratingScreen(onDetail: (drinkID: String) -> Unit) {
                                             offsetY.value > threshold -> {
                                                 history = history + currentIndex
                                                 currentIndex = (currentIndex + 1)
-                                                    .coerceAtMost(dummy.lastIndex)
+                                                    .coerceAtMost(drinks.lastIndex)
                                                 scope.launch {
                                                     offsetX.snapTo(0f)
                                                     offsetY.snapTo(0f)
                                                 }
                                             }
+
                                             offsetY.value < -threshold -> {
                                                 if (history.isNotEmpty()) {
                                                     currentIndex = history.last()
@@ -248,24 +282,27 @@ fun CuratingScreen(onDetail: (drinkID: String) -> Unit) {
                                                     offsetY.snapTo(0f)
                                                 }
                                             }
-                                            offsetX.value > threshold -> {
-                                                history = history + currentIndex
-                                                currentIndex = (currentIndex + 1)
-                                                    .coerceAtMost(dummy.lastIndex)
-                                                scope.launch {
-                                                    offsetX.snapTo(0f)
-                                                    offsetY.snapTo(0f)
-                                                }
-                                            }
-                                            offsetX.value < -threshold -> {
-                                                history = history + currentIndex
-                                                currentIndex = (currentIndex + 1)
-                                                    .coerceAtMost(dummy.lastIndex)
-                                                scope.launch {
-                                                    offsetX.snapTo(0f)
-                                                    offsetY.snapTo(0f)
-                                                }
-                                            }
+
+//                                            offsetX.value > threshold -> {
+//                                                history = history + currentIndex
+//                                                currentIndex = (currentIndex + 1)
+//                                                    .coerceAtMost(drinks.lastIndex)
+//                                                scope.launch {
+//                                                    offsetX.snapTo(0f)
+//                                                    offsetY.snapTo(0f)
+//                                                }
+//                                            }
+//
+//                                            offsetX.value < -threshold -> {
+//                                                history = history + currentIndex
+//                                                currentIndex = (currentIndex + 1)
+//                                                    .coerceAtMost(drinks.lastIndex)
+//                                                scope.launch {
+//                                                    offsetX.snapTo(0f)
+//                                                    offsetY.snapTo(0f)
+//                                                }
+//                                            }
+
                                             else -> {
                                                 scope.launch {
                                                     offsetX.animateTo(0f, tween(300))
@@ -297,11 +334,14 @@ fun CuratingScreen(onDetail: (drinkID: String) -> Unit) {
                         colors = CardDefaults.cardColors(containerColor = Color.Transparent)
                     ) {
                         Box(Modifier.fillMaxSize()) {
-                            Image(
-                                painter = painterResource(R.drawable.ballantines_30_years_old),
+                            AsyncImage(
+                                model = drink.imageUrl,
                                 contentDescription = null,
-                                contentScale = ContentScale.FillWidth,
-                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Fit,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(450.dp)
+                                    .offset(y = 80.dp),
                                 alignment = Alignment.Center
                             )
 
@@ -311,21 +351,25 @@ fun CuratingScreen(onDetail: (drinkID: String) -> Unit) {
                                     .padding(top = 42.dp, start = 24.dp)
                             ) {
                                 Text(
-                                    text = dummy[currentIndex],
+                                    text = drink.name,
                                     fontFamily = PaperlogyFamily,
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 34.sp,
                                     color = Color.White
                                 )
                                 Text(
-                                    text = "40%",
+                                    text = if (drink.minAbv == drink.maxAbv) {
+                                        "${formatAbv(drink.minAbv)}%"
+                                    } else {
+                                        "${formatAbv(drink.minAbv)}~${formatAbv(drink.maxAbv)}%"
+                                    },
                                     fontFamily = PaperlogyFamily,
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 34.sp,
                                     color = Color.White
                                 )
                                 Text(
-                                    text = "고도수",
+                                    text = drink.typeName,
                                     fontFamily = PaperlogyFamily,
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 34.sp,
@@ -346,7 +390,7 @@ fun CuratingScreen(onDetail: (drinkID: String) -> Unit) {
                                     contentAlignment = Alignment.Center
                                 ) {
                                     TextButton(
-                                        onClick = { onDetail("1") },
+                                        onClick = { onDetail(drink) },
                                         colors = ButtonDefaults.buttonColors(
                                             containerColor = Color(0xFF98DFE5)
                                         ),
@@ -366,18 +410,22 @@ fun CuratingScreen(onDetail: (drinkID: String) -> Unit) {
                                     horizontalArrangement = Arrangement.Center
                                 ) {
                                     IconButton(onClick = { /* 공유 */ }) {
-                                        Icon(Icons.Outlined.Share,
+                                        Icon(
+                                            Icons.Outlined.Share,
                                             contentDescription = "공유하기",
                                             tint = Color(0xFF6CD0D8),
                                             modifier = Modifier
-                                                .size(35.dp))
+                                                .size(35.dp)
+                                        )
                                     }
                                     IconButton(onClick = { /* 다운로드 */ }) {
-                                        Icon(Icons.Default.Download,
+                                        Icon(
+                                            Icons.Default.Download,
                                             contentDescription = "다운로드",
                                             tint = Color(0xFF6CD0D8),
                                             modifier = Modifier
-                                                .size(35.dp))
+                                                .size(35.dp)
+                                        )
                                     }
                                 }
                             }
