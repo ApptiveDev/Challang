@@ -50,14 +50,17 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.stellan.challang.R
+import com.stellan.challang.data.model.drink.Drink
 import com.stellan.challang.ui.component.StarRatingDecimal
 import com.stellan.challang.ui.theme.PaperlogyFamily
+import com.stellan.challang.ui.util.formatAbv
 import kotlin.math.roundToInt
 
 @Composable
 fun DrinkDetailScreen(
-    drinkId: String,
+    drink: Drink,
     onViewReviews: () -> Unit
 ) {
     LazyColumn(Modifier.fillMaxSize()) {
@@ -73,11 +76,14 @@ fun DrinkDetailScreen(
                         shape = RoundedCornerShape(24.dp)
                     )
             ) {
-                Image(
-                    painter = painterResource(R.drawable.balvenie),
+                AsyncImage(
+                    model = drink.imageUrl,
                     contentDescription = null,
-                    contentScale = ContentScale.FillWidth,
-                    modifier = Modifier.fillMaxWidth().padding(top = 50.dp, bottom = 70.dp)
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(600.dp)
+                        .padding(top = 50.dp, bottom = 70.dp)
                 )
             }
         }
@@ -90,14 +96,18 @@ fun DrinkDetailScreen(
                 verticalAlignment = Alignment.Bottom
             ) {
                 Text(
-                    "발베니",
+                    drink.name,
                     fontFamily = PaperlogyFamily,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 26.sp
                 )
                 Spacer(Modifier.width(12.dp))
                 Text(
-                    "위스키 40도",
+                    if (drink.minAbv == drink.maxAbv) {
+                        "${drink.typeName} ${formatAbv(drink.minAbv)}도"
+                    } else {
+                        "${drink.typeName} ${formatAbv(drink.minAbv)}~${formatAbv(drink.maxAbv)}도"
+                    },
                     fontFamily = PaperlogyFamily,
                     fontWeight = FontWeight.Normal,
                     fontSize = 16.sp,
@@ -117,18 +127,22 @@ fun DrinkDetailScreen(
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalArrangement = Arrangement.spacedBy((-3).dp),
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 30.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 30.dp)
             ) {
-                repeat(11) {
+                drink.liquorTags.forEach { tag ->
                     FilterChip(
                         selected = false,
                         onClick = { },
-                        label = { Text(
-                            "바닐라향",
-                            fontSize = 13.sp,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.fillMaxWidth()
-                        ) },
+                        label = {
+                            Text(
+                                tag.tagName,
+                                fontSize = 13.sp,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        },
                         border = BorderStroke(0.dp, Color.Transparent),
                         colors = FilterChipDefaults.filterChipColors(
                             containerColor = Color(0xFFCEEFF2)
@@ -149,10 +163,7 @@ fun DrinkDetailScreen(
                     .background(Color(0xFFCEEFF2), shape = RoundedCornerShape(10.dp))
             ) {
                 Text(
-                    "짐빔(Jim Beam)은 미국 켄터키주에서 생산되는 대표적인 버번 위스키에요." +
-                        "1795년부터 이어져 온 전통과 독자적인 제조법으로 깊고 부드러운 풍미를 자랑하죠." +
-                        "오크통에서 숙성된 특유의 풍미가 세계적으로 사랑받고 있으며," +
-                        "다양한 칵테일 베이스로도 널리 활용된답니다.",
+                    drink.origin,
                     fontWeight = FontWeight.Normal,
                     fontSize = 13.sp,
                     lineHeight = 30.sp,
@@ -174,11 +185,7 @@ fun DrinkDetailScreen(
                     modifier = Modifier.padding(start = 15.dp, top = 15.dp)
                 )
                 Text(
-                    "짐빔은 은은한 바닐라와 캐러멜 향을 중심으로, 고소한 옥수수 곡물 향과 오크 나무 숙성에서 비롯된" +
-                            " 부드럽고 깊이 있는 풍미가 느껴지는 버번 위스키입니다." +
-                        "적당한 단맛과 함께 살짝 스파이시한 느낌이 균형을 이루어, 전반적으로 깔끔하고 산뜻한 인상을 줍니다." +
-                        "맛이 무겁거나 강하지 않아 초심자들도 부담 없이 즐기기 좋으며," +
-                        "스트레이트, 온더록, 하이볼, 칵테일 등 다양한 방식으로 활용할 수 있는 활용도 높은 위스키입니다.",
+                    drink.tastingNote,
                     fontWeight = FontWeight.Normal,
                     fontSize = 12.sp,
                     lineHeight = 24.sp,
@@ -190,7 +197,7 @@ fun DrinkDetailScreen(
         }
 
         item {
-            val degree = 40f
+            val degree = drink.maxAbv.toFloat()
             val valueRange = 0f..60f
 
             var sliderWidthPx by remember { mutableIntStateOf(0) }
@@ -226,15 +233,21 @@ fun DrinkDetailScreen(
                 val xOffsetPx = horizontalPaddingPx + (trackWidthPx - thumbRadiusPx * 2) * fraction
 
                 Text(
-                    "40도",
+                    "${formatAbv(drink.maxAbv)}도",
                     fontWeight = FontWeight.Normal,
                     modifier = Modifier
-                        .offset { IntOffset(xOffsetPx.roundToInt(),
-                            50.dp.toPx().roundToInt()) }
+                        .offset {
+                            IntOffset(
+                                xOffsetPx.roundToInt(),
+                                50.dp.toPx().roundToInt()
+                            )
+                        }
                 )
             }
-            HorizontalDivider(Modifier.padding(30.dp),
-                thickness = 3.dp, color = Color(0xFFCEEFF2))
+            HorizontalDivider(
+                Modifier.padding(30.dp),
+                thickness = 3.dp, color = Color(0xFFCEEFF2)
+            )
         }
 
         item {
@@ -258,7 +271,7 @@ fun DrinkDetailScreen(
                         fontWeight = FontWeight.Normal,
                         fontSize = 12.sp,
                         color = Color(0xFF6D6B6B),
-                        modifier = Modifier.clickable{ onViewReviews() }
+                        modifier = Modifier.clickable { onViewReviews() }
                     )
                 }
                 Spacer(Modifier.height(10.dp))
@@ -299,14 +312,16 @@ fun DrinkDetailScreen(
                             repeat(3) {
                                 SuggestionChip(
                                     onClick = {},
-                                    label = { Text(
-                                        "바닐라향",
-                                        fontSize = 8.sp,
-                                        color = Color.Black,
-                                        textAlign = TextAlign.Center,
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis,
-                                    ) },
+                                    label = {
+                                        Text(
+                                            "바닐라향",
+                                            fontSize = 8.sp,
+                                            color = Color.Black,
+                                            textAlign = TextAlign.Center,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis,
+                                        )
+                                    },
                                     border = BorderStroke(0.dp, Color.Transparent),
                                     colors = SuggestionChipDefaults.suggestionChipColors(
                                         containerColor = Color.White
@@ -361,7 +376,7 @@ fun DrinkDetailScreen(
                                 contentScale = ContentScale.FillHeight
                             )
                         }
-                        Column(Modifier.padding(top = 15.dp, bottom = 15.dp,)) {
+                        Column(Modifier.padding(top = 15.dp, bottom = 15.dp)) {
                             Text(
                                 "발렌타인 30년",
                                 fontSize = 18.sp
@@ -376,14 +391,16 @@ fun DrinkDetailScreen(
                                 repeat(6) {
                                     SuggestionChip(
                                         onClick = {},
-                                        label = { Text(
-                                            "바닐라향",
-                                            fontSize = 9.sp,
-                                            color = Color.Black,
-                                            textAlign = TextAlign.Center,
-                                            maxLines = 1,
-                                            overflow = TextOverflow.Ellipsis,
-                                        ) },
+                                        label = {
+                                            Text(
+                                                "바닐라향",
+                                                fontSize = 9.sp,
+                                                color = Color.Black,
+                                                textAlign = TextAlign.Center,
+                                                maxLines = 1,
+                                                overflow = TextOverflow.Ellipsis,
+                                            )
+                                        },
                                         border = BorderStroke(0.dp, Color.Transparent),
                                         colors = SuggestionChipDefaults.suggestionChipColors(
                                             containerColor = Color(0xFFCEEFF2)

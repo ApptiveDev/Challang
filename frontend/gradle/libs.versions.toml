@@ -1,5 +1,6 @@
 [versions]
 agp = "8.11.1"
+coilCompose = "2.7.0"
 converterGson = "3.0.0"
 datastorePreferences = "1.1.7"
 glide = "4.16.0"
@@ -28,6 +29,7 @@ androidx-foundation = { module = "androidx.compose.foundation:foundation", versi
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-security-crypto = { module = "androidx.security:security-crypto", version.ref = "securityCrypto" }
+coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }

@@ -1,5 +1,6 @@
 package com.stellan.challang.ui.screen.auth
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -50,20 +51,20 @@ import kotlin.math.*
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.runtime.remember
-import androidx. compose. ui. tooling. preview. Preview
-import androidx. compose. foundation. rememberScrollState
-import androidx. compose. foundation. verticalScroll
-import com. stellan. challang. ui. viewmodel. TagViewModel
-import com. stellan. challang. data. api.ApiClient
-import  com. stellan. challang. data. repository. TagRepository
-import com. stellan. challang. data. model. auth. TokenProvider
-import com. stellan. challang. data. model. Preference. PreferenceRequest
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import com.stellan.challang.ui.viewmodel.TagViewModel
+import com.stellan.challang.data.api.ApiClient
+import  com.stellan.challang.data.repository.TagRepository
+import com.stellan.challang.data.model.auth.TokenProvider
+import com.stellan.challang.data.model.Preference.PreferenceRequest
 import com.stellan.challang.data.repository.PreferenceRepository
-import  kotlinx. coroutines. CoroutineScope
-import kotlinx. coroutines. Dispatchers
-import  kotlinx. coroutines. launch
-import kotlinx. coroutines. withContext
-import android. util. Log
+import  kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import  kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import android.util.Log
 import com.stellan.challang.ui.viewmodel.PreferenceViewModel
 
 //@Composable
@@ -148,6 +149,7 @@ import com.stellan.challang.ui.viewmodel.PreferenceViewModel
 //        )
 //    }
 //}
+@SuppressLint("RememberReturnType")
 @Composable
 fun ProfileSettingScreen(
     onProfileComplete: () -> Unit
@@ -177,15 +179,18 @@ fun ProfileSettingScreen(
             onNext = { step = 2 },
             onTypeSelected = { selectedTypeIds = it }
         )
+
         2 -> ProfileStepTwo(
             onValueSelected = { selectedLevelId = it },
             onNext = { step = 3 }
         )
+
         3 -> ProfileStepThree(
             viewModel = tagViewModel,
             onNext = { step = 4 },
             onTagSelected = { selectedTagIds = it }
         )
+
         4 -> ProfileStepFour(
             onNext = {
                 val token = TokenProvider.getRefreshToken() ?: return@ProfileStepFour
@@ -204,8 +209,6 @@ fun ProfileSettingScreen(
         Log.e("PreferenceSubmit", "에러: $it")
     }
 }
-
-
 
 
 @Composable
@@ -277,10 +280,10 @@ fun ProfileStepOne(
                         tonalElevation = if (isSelected) 4.dp else 0.dp,
                         modifier = Modifier
                             .size(width = 105.dp, height = 57.dp)
-                            .clickable (
+                            .clickable(
                                 interactionSource = remember { MutableInteractionSource() },
                                 indication = null
-                            ){
+                            ) {
                                 if (isSelected) {
                                     selectedIds.remove(id)
                                     selectedOptions.remove(option)
@@ -321,13 +324,15 @@ fun ProfileStepOne(
                         }
                     },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = if (isSelectionEnough) Color(0xFFB2DADA) else Color(0xFFDDF0F0)
+                        containerColor = if (isSelectionEnough) Color(0xFFB2DADA) else Color(
+                            0xFFDDF0F0
+                        )
                     ),
                     shape = RoundedCornerShape(10.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(48.dp)
-                )  {
+                ) {
                     Text(
                         "다음",
                         fontFamily = PaperlogyFamily,
@@ -348,8 +353,10 @@ fun ProfileStepTwo(
     onNext: () -> Unit
 ) {
     val levels = listOf("고도수", "중도수", "저도수")
-    val descriptions = listOf("최저 도수 기준 25% 초과",
-        "최저 도수 기준 15% 초과~25% 이하", "최저 도수 기준 15% 이하")
+    val descriptions = listOf(
+        "최저 도수 기준 25% 초과",
+        "최저 도수 기준 15% 초과~25% 이하", "최저 도수 기준 15% 이하"
+    )
     var sliderValue by remember { mutableFloatStateOf(1f) }
     val selectedIndex = sliderValue.roundToInt()
     val isSelectionMade = sliderValue in 0f..2f
@@ -474,7 +481,7 @@ fun ProfileStepTwo(
             Button(
                 onClick = {
                     if (isSelectionMade) {
-                        onValueSelected(selectedIndex+1) // 🔼 선택값 전달!
+                        onValueSelected(selectedIndex + 1) // 🔼 선택값 전달!
                         onNext()
                     }
                 },
@@ -497,7 +504,6 @@ fun ProfileStepTwo(
         }
     }
 }
-
 
 
 @Composable
@@ -568,52 +574,54 @@ fun ProfileStepThree(
                     .height(460.dp) // 고정 높이
                     .verticalScroll(rememberScrollState()) // 세로 스크롤 적용
             ) {
-            FlowRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy((4).dp, Alignment.Start),
-                verticalArrangement = Arrangement.spacedBy((2).dp)
-            ) {
-                alcoholOptions.forEach { option ->
-                    val isSelected = selectedOptions.contains(option)
-                    Surface(
-                        shape = CircleShape,
-                        color = if (isSelected) Color(0xFFB2DADA) else Color(0xFFDDF0F0),
-                        tonalElevation = if (isSelected) 4.dp else 0.dp,
-                        modifier = Modifier
-//                            .size(width = 100.dp, height = 57.dp)
-                            .height(57.dp)
-                            .defaultMinSize(minWidth = 100.dp)
-                            .wrapContentWidth(unbounded = true)
-                            .clickable (
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = null){
-                                if (isSelected) {
-                                    selectedOptions.remove(option)
-                                } else if (selectedOptions.size < 5) {
-                                    selectedOptions.add(option)
-                                }
-                            }
-                            .padding(horizontal = 2.dp, vertical = 8.dp)
-                    ) {
-                        Box(
-//                            modifier = Modifier.fillMaxSize(),
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy((4).dp, Alignment.Start),
+                    verticalArrangement = Arrangement.spacedBy((2).dp)
+                ) {
+                    alcoholOptions.forEach { option ->
+                        val isSelected = selectedOptions.contains(option)
+                        Surface(
+                            shape = CircleShape,
+                            color = if (isSelected) Color(0xFFB2DADA) else Color(0xFFDDF0F0),
+                            tonalElevation = if (isSelected) 4.dp else 0.dp,
                             modifier = Modifier
-                                .padding(horizontal = 15.dp, vertical = 5.dp),
-                            contentAlignment = Alignment.Center
+//                            .size(width = 100.dp, height = 57.dp)
+                                .height(57.dp)
+                                .defaultMinSize(minWidth = 100.dp)
+                                .wrapContentWidth(unbounded = true)
+                                .clickable(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = null
+                                ) {
+                                    if (isSelected) {
+                                        selectedOptions.remove(option)
+                                    } else {
+                                        selectedOptions.add(option)
+                                    }
+                                }
+                                .padding(horizontal = 2.dp, vertical = 8.dp)
                         ) {
-                            Text(
-                                text = option,
-                                fontFamily = PaperlogyFamily,
-                                fontWeight = FontWeight.Normal,
-                                fontSize = 14.sp,
-                                color = Color.Black,
-                                textAlign = TextAlign.Center,
-                                maxLines = 1
-                            )
+                            Box(
+//                            modifier = Modifier.fillMaxSize(),
+                                modifier = Modifier
+                                    .padding(horizontal = 15.dp, vertical = 5.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = option,
+                                    fontFamily = PaperlogyFamily,
+                                    fontWeight = FontWeight.Normal,
+                                    fontSize = 14.sp,
+                                    color = Color.Black,
+                                    textAlign = TextAlign.Center,
+                                    maxLines = 1
+                                )
+                            }
                         }
                     }
                 }
-            }}
+            }
             Spacer(modifier = Modifier.weight(1f))
             Box(
                 modifier = Modifier
@@ -638,7 +646,7 @@ fun ProfileStepThree(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(48.dp)
-                )  {
+                ) {
                     Text(
                         "확인",
                         fontFamily = PaperlogyFamily,

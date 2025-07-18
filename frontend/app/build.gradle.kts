@@ -67,6 +67,7 @@ dependencies {
     implementation(libs.v2.cert) // 카카오 인증서비스
 
     implementation(libs.glide) // 이미지 핸들링 라이브러리 Glide
+    implementation(libs.coil.compose)
 
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
