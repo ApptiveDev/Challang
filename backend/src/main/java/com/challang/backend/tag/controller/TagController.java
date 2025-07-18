@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Tag", description = "태그 API")
@@ -22,8 +23,8 @@ public class TagController {
 
     private final TagService tagService;
 
-    // TODO: 관리자만 접근 가능하게
     @Operation(summary = "[관리자] 태그 생성", description = "새로운 태그를 등록합니다.")
+    @PreAuthorize("hasRole('ADMIN')")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "태그 생성 성공"),
             @ApiResponse(responseCode = "400", description = "요청값 유효성 검증 실패"),
@@ -57,6 +58,7 @@ public class TagController {
     }
 
     @Operation(summary = "[관리자] 태그 수정", description = "특정 태그의 이름을 수정합니다.")
+    @PreAuthorize("hasRole('ADMIN')")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "태그 수정 성공"),
             @ApiResponse(responseCode = "400", description = "요청값 유효성 검증 실패"),
@@ -73,6 +75,7 @@ public class TagController {
     }
 
     @Operation(summary = "[관리자] 태그 삭제", description = "특정 태그를 삭제합니다.")
+    @PreAuthorize("hasRole('ADMIN')")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "태그 삭제 성공"),
             @ApiResponse(responseCode = "404", description = "해당 ID의 태그가 존재하지 않음")

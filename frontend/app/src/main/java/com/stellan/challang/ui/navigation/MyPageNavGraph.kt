@@ -5,6 +5,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.stellan.challang.ui.screen.mypage.*
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalContext
+import kotlinx.coroutines.launch
+import com. stellan. challang. data. api. ApiClient
+
+import com.stellan.challang.data.repository.AuthRepository
+import androidx.compose.runtime.*
+
 
 fun NavGraphBuilder.myPageNavGraph(
     rootNavController: NavHostController,
@@ -12,13 +20,15 @@ fun NavGraphBuilder.myPageNavGraph(
 ) {
     navigation(startDestination = "mypageMain", route = "mypage") {
         composable("mypageMain") {
+            val context = LocalContext.current
+            val coroutineScope = rememberCoroutineScope()
+            var showLoggedOutDialog by remember { mutableStateOf(false) }
+
             MyPageScreen(
-                onHelpClick    = { bottomNavController.navigate("help") },
-                onLogoutClick  = {
-                    rootNavController.navigate("login") {
-                        popUpTo("main") { inclusive = true }
-                    }
-                                 },
+                rootNavController = rootNavController,
+                onHelpClick = { bottomNavController.navigate("help") },
+                onLogoutClick = {
+                },
                 onWithdrawClick = { bottomNavController.navigate("withdraw") }
             )
         }
@@ -34,7 +44,7 @@ fun NavGraphBuilder.myPageNavGraph(
         }
         composable("withdraw") {
             WithdrawScreen(onDone = {
-                rootNavController.navigate("login") {
+                rootNavController.navigate("auth") {
                     popUpTo("main") { inclusive = true }
                     launchSingleTop = true
                 }

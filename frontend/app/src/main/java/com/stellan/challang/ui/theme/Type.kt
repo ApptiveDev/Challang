@@ -1,6 +1,7 @@
 package com.stellan.challang.ui.theme
 
 import androidx.compose.material3.Typography
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -19,27 +20,22 @@ val PaperlogyFamily = FontFamily(
     Font(R.font.paperlogy_extralight, FontWeight.ExtraLight),
     Font(R.font.paperlogy_medium, FontWeight.Medium),
 )
-// Set of Material typography styles to start with
+
 val Typography = Typography(
     bodyMedium = TextStyle(
         fontFamily = PaperlogyFamily,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp
-    )
-    /* Other default text styles to override
-    titleLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 22.sp,
-        lineHeight = 28.sp,
-        letterSpacing = 0.sp
     ),
-    labelSmall = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Medium,
-        fontSize = 11.sp,
-        lineHeight = 16.sp,
-        letterSpacing = 0.5.sp
+    bodyLarge = TextStyle(
+        fontFamily = PaperlogyFamily,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 16.sp
+    ),
+    labelLarge = TextStyle(
+        fontFamily = PaperlogyFamily,
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp,
+        color = Color(0xFF7E7E7E)
     )
-    */
 )

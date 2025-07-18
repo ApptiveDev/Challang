@@ -34,7 +34,6 @@ public class CurrentUserResolver implements HandlerMethodArgumentResolver {
 
         if (token == null) {
             throw new BaseException(AuthErrorCode.UNAUTHORIZED_REQUEST);
-
         }
 
         Long id = jwtUtil.getId(token);

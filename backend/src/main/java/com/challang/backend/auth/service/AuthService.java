@@ -6,11 +6,17 @@ import com.challang.backend.auth.jwt.CustomUserDetails;
 import com.challang.backend.auth.jwt.JwtUtil;
 import com.challang.backend.global.exception.BaseException;
 import com.challang.backend.global.util.RedisUtil;
+import com.challang.backend.preference.repository.LiquorPreferenceLevelRepository;
+import com.challang.backend.preference.repository.LiquorPreferenceTagRepository;
+import com.challang.backend.preference.repository.LiquorPreferenceTypeRepository;
 import com.challang.backend.user.entity.User;
 import com.challang.backend.user.exception.UserErrorCode;
 import com.challang.backend.user.repository.UserRepository;
+import com.challang.backend.user.service.UserService;
+import com.challang.backend.withdrawal.entity.ReasonType;
+import com.challang.backend.withdrawal.entity.WithdrawalReason;
+import com.challang.backend.withdrawal.repository.WithdrawalReasonRepository;
 import jakarta.servlet.http.HttpServletRequest;
-import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +26,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
 
 
 @RequiredArgsConstructor
@@ -39,53 +47,59 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
     private final RedisUtil redisUtil;
+    private final UserService userService;
+
+    private final WithdrawalReasonRepository withdrawalReasonRepository;
+    private final LiquorPreferenceLevelRepository preferenceLevelRepository;
+    private final LiquorPreferenceTypeRepository preferenceTypeRepository;
+    private final LiquorPreferenceTagRepository preferenceTagRepository;
 
     @Value("${jwt.refresh-expired-time}")
     private long refreshExpiredSeconds;
 
-
     // 이메일 회원가입
-    public boolean emailSignUp(EmailSignUpRequestDto dto) {
-        validateAdult(dto.birthDate());
-
-        if (existsByEmail(dto.email())) {
-            throw new BaseException(UserErrorCode.USER_ALREADY_EXISTS);
-        }
-
-        String encodedPassword = passwordEncoder.encode(dto.password());
-
-        User user = User.createWithEmail(
-                dto.email(),
-                encodedPassword,
-                dto.birthDate(),
-                dto.gender(),
-                dto.role()
-        );
-
-        userRepository.save(user);
-
-        return true;
-    }
-
-    // 이메일 로그인
-    @Transactional
-    public TokenResponse emailSignIn(EmailSignInRequestDto dto) {
-        // 인증
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(dto.email(), dto.password()));
-
-        // 토큰 생성
-        String accessToken = jwtUtil.createAccessToken(authentication);
-        String refreshToken = jwtUtil.createRefreshToken(authentication);
-
-        // 리프레시 토큰의 jti 추출
-        String jti = jwtUtil.getJti(refreshToken);
-
-        // redis에 저장
-        redisUtil.setDataExpire(jti, refreshToken, refreshExpiredSeconds);
-
-        return new TokenResponse(accessToken, refreshToken);
-    }
+//    public boolean emailSignUp(EmailSignUpRequestDto dto) {
+//        validateAdult(dto.birthDate());
+//
+//        if (existsByEmail(dto.email())) {
+//            throw new BaseException(UserErrorCode.USER_ALREADY_EXISTS);
+//        }
+//
+//        String encodedPassword = passwordEncoder.encode(dto.password());
+//
+//        User user = User.createWithEmail(
+//                dto.email(),
+//                encodedPassword,
+//                dto.nickname(),
+//                dto.birthDate(),
+//                dto.gender(),
+//                dto.role()
+//        );
+//
+//        userRepository.save(user);
+//
+//        return true;
+//    }
+//
+//    // 이메일 로그인
+//    @Transactional
+//    public TokenResponse emailSignIn(EmailSignInRequestDto dto) {
+//        // 인증
+//        Authentication authentication = authenticationManager.authenticate(
+//                new UsernamePasswordAuthenticationToken(dto.email(), dto.password()));
+//
+//        // 토큰 생성
+//        String accessToken = jwtUtil.createAccessToken(authentication);
+//        String refreshToken = jwtUtil.createRefreshToken(authentication);
+//
+//        // 리프레시 토큰의 jti 추출
+//        String jti = jwtUtil.getJti(refreshToken);
+//
+//        // redis에 저장
+//        redisUtil.setDataExpire(jti, refreshToken, refreshExpiredSeconds);
+//
+//        return new TokenResponse(accessToken, refreshToken);
+//    }
 
     public boolean kakaoSignUp(KakaoSignUpRequestDto dto) {
         // 성인인지 확인
@@ -101,6 +115,7 @@ public class AuthService {
 
         User user = User.createWithOauth(
                 oauthId,
+                dto.nickname(),
                 dto.birthDate(),
                 dto.gender(),
                 dto.role()
@@ -134,7 +149,13 @@ public class AuthService {
         String jti = jwtUtil.getJti(refreshJwt);
         redisUtil.setDataExpire(jti, refreshJwt, refreshExpiredSeconds);
 
-        return new TokenResponse(accessJwt, refreshJwt);
+        // 6. 선호 설정 여부 확인
+        boolean isPreferenceSet =
+                preferenceLevelRepository.existsByUser(user)
+                        && preferenceTypeRepository.existsByUser(user)
+                        && preferenceTagRepository.existsByUser(user);
+
+        return new TokenResponse(accessJwt, refreshJwt, isPreferenceSet);
     }
 
     public TokenResponse reissueTokens(HttpServletRequest request) {
@@ -156,7 +177,7 @@ public class AuthService {
 
         // 새 리프레시 토큰 저장
         String newJti = jwtUtil.getJti(newRefresh);
-        redisUtil.setDataExpire(newJti, userId.toString(), refreshExpiredSeconds);
+        redisUtil.setDataExpire(newJti, newRefresh, refreshExpiredSeconds);
 
         return new TokenResponse(newAccess, newRefresh);
     }
@@ -175,11 +196,15 @@ public class AuthService {
 
 
     @Transactional
-    public void deleteUser(final Long id, String refreshToken) {
+    public void deleteUser(final Long id, String refreshToken, ReasonType reason) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new BaseException(UserErrorCode.USER_NOT_FOUND));
 
-        // TODO: 관련 데이터 모두 삭제
+        WithdrawalReason withdrawalReason = WithdrawalReason.builder()
+                .userId(user.getUserId())
+                .reason(reason)
+                .build();
+        withdrawalReasonRepository.save(withdrawalReason);
 
         try {
             String jti = jwtUtil.getJti(refreshToken);
@@ -188,7 +213,7 @@ public class AuthService {
             log.warn("유저 삭제 중 토큰 제거 실패: {}", e.getMessage());
         }
 
-        userRepository.delete(user);
+        userService.deleteUser(id);
     }
 
 
@@ -206,6 +231,5 @@ public class AuthService {
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
-
 
 }

@@ -1,7 +1,8 @@
-
 package com.stellan.challang.ui.component
 
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -28,7 +29,7 @@ fun SpeechBubble(
         val tailW = with(density) { 10.dp.toPx() }
         val tailH = with(density) { 8.dp.toPx() }
         val tailX = with(density) { 16.dp.toPx() }
-        val radius = (size.height - tailH) / 2f
+        val radius = (size.height - tailH) / 2.5f
         val bodyHeight = size.height - tailH
 
         addRoundRect(
@@ -55,14 +56,17 @@ fun SpeechBubble(
     Surface(
         shape = bubbleShape,
         color = bubbleColor,
-        shadowElevation = 1.5.dp
+        shadowElevation = 1.5.dp,
+        modifier = Modifier
+            .height(47.dp)
+            .width(135.dp)
     ) {
         Text(
             text = text,
-            modifier = Modifier.padding(start = 14.dp, end = 14.dp, top = 6.dp, bottom = 12.dp),
+            modifier = Modifier.padding(top = 13.dp),
             fontFamily = PaperlogyFamily,
             fontWeight = FontWeight.SemiBold,
-            fontSize = 12.sp,
+            fontSize = 13.sp,
             color = Color.Black,
             textAlign = TextAlign.Center
         )

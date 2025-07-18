@@ -17,6 +17,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import com.challang.backend.auth.dto.request.UserDeletionRequest;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Tag(name = "Auth API", description = "사용자 회원가입, 로그인 등 인증 관련 API")
 @RestController
@@ -92,10 +94,11 @@ public class AuthController {
     public ResponseEntity<BaseResponse<String>> deleteUser(
             @Parameter(description = "로그인 시 발급받은 Refresh Token", required = true)
             @RequestHeader(name = "Refresh-Token") String refreshToken,
+            @RequestBody @Valid UserDeletionRequest deletionRequest,
             @Parameter(hidden = true)
             @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        authService.deleteUser(userDetails.getUserId(), refreshToken);
+        authService.deleteUser(userDetails.getUserId(), refreshToken, deletionRequest.getReason());
         return ResponseEntity.ok(new BaseResponse<>("회원 탈퇴 완료"));
     }
 

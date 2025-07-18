@@ -5,6 +5,7 @@ import com.challang.backend.liquor.entity.Liquor;
 import com.challang.backend.user.entity.User;
 import io.lettuce.core.dynamic.annotation.Param;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ArchiveRepository extends JpaRepository<Archive, Long> {
 
+    @Query("SELECT a.liquor.id, COUNT(a) as archiveCount FROM Archive a GROUP BY a.liquor.id ORDER BY archiveCount DESC")
+    List<Object[]> findTop8ArchivedLiquors(Pageable pageable);
 
     Optional<Archive> findByUserAndLiquor(User user, Liquor liquor);
     boolean existsByUserAndLiquor(User user, Liquor liquor);
@@ -44,4 +47,14 @@ public interface ArchiveRepository extends JpaRepository<Archive, Long> {
             @Param("cursor") Long cursor,
             Pageable pageable
     );
-};
+
+    // 술 id만 얻는 용도 => joinX
+    List<Archive> findByUser(User user);
+
+    long countByUser(User user);
+
+    @Modifying
+    @Query("DELETE FROM Archive a WHERE a.user = :user")
+    void deleteAllByUser(@Param("user") User user);
+
+}

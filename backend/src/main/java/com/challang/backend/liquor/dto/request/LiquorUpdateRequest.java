@@ -10,7 +10,6 @@ public record LiquorUpdateRequest(
         String imageUrl,
         String tastingNote,
         String origin,
-        String color,
         Double minAbv,
         Double maxAbv,
         Long levelId,

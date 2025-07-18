@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Liquor Type", description = "주종 API")
@@ -22,8 +23,8 @@ public class LiquorTypeController {
 
     private final LiquorTypeService liquorTypeService;
 
-    // TODO: 관리자만 접근 가능하게
     @Operation(summary = "[관리자] 주종 생성", description = "새로운 주종을 등록합니다.")
+    @PreAuthorize("hasRole('ADMIN')")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "주종 생성 성공"),
             @ApiResponse(responseCode = "400", description = "요청값 유효성 검증 실패"),
@@ -57,6 +58,7 @@ public class LiquorTypeController {
     }
 
     @Operation(summary = "[관리자] 주종 수정", description = "특정 주종의 이름을 수정합니다.")
+    @PreAuthorize("hasRole('ADMIN')")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "주종 수정 성공"),
             @ApiResponse(responseCode = "400", description = "요청값 유효성 검증 실패"),
@@ -73,6 +75,7 @@ public class LiquorTypeController {
     }
 
     @Operation(summary = "[관리자] 주종 삭제", description = "특정 주종을 삭제합니다.")
+    @PreAuthorize("hasRole('ADMIN')")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "주종 삭제 성공"),
             @ApiResponse(responseCode = "404", description = "해당 ID의 주종이 존재하지 않음")

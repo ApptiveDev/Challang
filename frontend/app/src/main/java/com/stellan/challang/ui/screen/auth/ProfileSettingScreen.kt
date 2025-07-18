@@ -1,5 +1,6 @@
 package com.stellan.challang.ui.screen.auth
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -47,31 +48,183 @@ import androidx.compose.runtime.mutableFloatStateOf
 
 import androidx.compose.animation.core.*
 import kotlin.math.*
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.runtime.remember
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import com.stellan.challang.ui.viewmodel.TagViewModel
+import com.stellan.challang.data.api.ApiClient
+import  com.stellan.challang.data.repository.TagRepository
+import com.stellan.challang.data.model.auth.TokenProvider
+import com.stellan.challang.data.model.Preference.PreferenceRequest
+import com.stellan.challang.data.repository.PreferenceRepository
+import  kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import  kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import android.util.Log
+import com.stellan.challang.ui.viewmodel.PreferenceViewModel
 
+//@Composable
+//fun ProfileSettingScreen(
+//    onProfileComplete: () -> Unit
+//) {
+//    // ApiClient 사용하도록 변경
+//    val tagRepository = remember { TagRepository(ApiClient.tagApi) }
+//    val viewModel = remember { TagViewModel(tagRepository) }
+//
+//    var step by remember { mutableIntStateOf(1) }
+//
+//    when (step) {
+//        1 -> ProfileStepOne(onNext = { step = 2 })
+//        2 -> ProfileStepTwo(
+//            onValueSelected = {},
+//            onNext = { step = 3 }
+//        )
+//        3 -> ProfileStepThree(
+//            onNext = { step = 4 },
+//            viewModel = viewModel
+//        )
+//        4 -> ProfileStepFour(onNext = onProfileComplete)
+//    }
+//}
+//@Composable
+//fun ProfileSettingScreen(
+//    onProfileComplete: () -> Unit
+//) {
+//    val tagRepository = remember { TagRepository(ApiClient.tagApi) }
+//    val tagViewModel = remember { TagViewModel(tagRepository) }
+//    val preferenceRepository = remember { PreferenceRepository(ApiClient.preferenceApi) }
+//    val preferenceViewModel = remember { PreferenceViewModel(preferenceRepository) }
+//
+//
+//    // 🟡 상태 모아두기
+//    var selectedTypeIds by remember { mutableStateOf<List<Int>>(emptyList()) }
+//    var selectedLevelId by remember { mutableStateOf<Int?>(null) }
+//    var selectedTagIds by remember { mutableStateOf<List<Int>>(emptyList()) }
+//
+//    var step by remember { mutableIntStateOf(1) }
+//
+//    when (step) {
+//        1 -> ProfileStepOne(
+//            onNext = { step = 2 },
+//            onTypeSelected = { selectedTypeIds = it } // 🔼 선택된 주종 ID 저장
+//        )
+//        2 -> ProfileStepTwo(
+//            onValueSelected = { selectedLevelId = it }, // 🔼 경험 수준 저장
+//            onNext = { step = 3 }
+//        )
+//        3 -> ProfileStepThree(
+//            viewModel = tagViewModel,
+//            onNext = { step = 4 },
+//            onTagSelected = { selectedTagIds = it } // 🔼 스타일 태그 ID 저장
+//        )
+//        4 -> ProfileStepFour(
+//            onNext = {
+//                val token = TokenProvider.getAccessToken() ?: return@ProfileStepFour
+//                val request = PreferenceRequest(
+//                    typeIds = selectedTypeIds,
+//                    levelId = selectedLevelId ?: 0,
+//                    tagIds = selectedTagIds
+//                )
+//                preferenceViewModel.submitPreference("Bearer $token", request)
+//
+//                CoroutineScope(Dispatchers.IO).launch {
+//                    val token = TokenProvider.getRefreshToken()  // ⏪ 여기 access token 사용해야 함
+//                    try {
+//                        if (!token.isNullOrBlank()) {
+//                            preferenceRepository.submitPreference("Bearer $token", request)
+//                            withContext(Dispatchers.Main) {
+//                                onProfileComplete()
+//                            }
+//                        }
+//                    } catch (e: Exception) {
+//                        Log.e("PreferenceSubmit", "전송 실패", e)
+//                    }
+//                }
+//
+//            }
+//        )
+//    }
+//}
+@SuppressLint("RememberReturnType")
 @Composable
 fun ProfileSettingScreen(
     onProfileComplete: () -> Unit
 ) {
+    val tagRepository = remember { TagRepository(ApiClient.tagApi) }
+    val tagViewModel = remember { TagViewModel(tagRepository) }
+    val preferenceRepository = remember { PreferenceRepository(ApiClient.preferenceApi) }
+    val preferenceViewModel = remember { PreferenceViewModel(preferenceRepository) }
+
+    val submitSuccess by preferenceViewModel.submitSuccess.collectAsState()
+    val errorMessage by preferenceViewModel.errorMessage.collectAsState()
+
+    // ✅ submit 성공 시 콜백 호출
+    LaunchedEffect(submitSuccess) {
+        if (submitSuccess == true) {
+            onProfileComplete()
+        }
+    }
+
+    var selectedTypeIds by remember { mutableStateOf<List<Int>>(emptyList()) }
+    var selectedLevelId by remember { mutableStateOf<Int?>(null) }
+    var selectedTagIds by remember { mutableStateOf<List<Int>>(emptyList()) }
     var step by remember { mutableIntStateOf(1) }
 
     when (step) {
-        1 -> ProfileStepOne(onNext = { step = 2 })
+        1 -> ProfileStepOne(
+            onNext = { step = 2 },
+            onTypeSelected = { selectedTypeIds = it }
+        )
+
         2 -> ProfileStepTwo(
-            onValueSelected = {},
+            onValueSelected = { selectedLevelId = it },
             onNext = { step = 3 }
         )
-        3 -> ProfileStepThree(onNext = { step = 4 })
-        4 -> ProfileStepFour(onNext = onProfileComplete)
+
+        3 -> ProfileStepThree(
+            viewModel = tagViewModel,
+            onNext = { step = 4 },
+            onTagSelected = { selectedTagIds = it }
+        )
+
+        4 -> ProfileStepFour(
+            onNext = {
+                val token = TokenProvider.getRefreshToken() ?: return@ProfileStepFour
+                val request = PreferenceRequest(
+                    typeIds = selectedTypeIds,
+                    levelId = selectedLevelId ?: 0,
+                    tagIds = selectedTagIds
+                )
+                preferenceViewModel.submitPreference("Bearer $token", request)
+            }
+        )
+    }
+
+    // ✅ 에러 메시지 로그 (선택)
+    errorMessage?.let {
+        Log.e("PreferenceSubmit", "에러: $it")
     }
 }
 
+
 @Composable
 fun ProfileStepOne(
-    onNext: () -> Unit
+    onNext: () -> Unit,
+    onTypeSelected: (List<Int>) -> Unit
 ) {
-    val alcoholOptions = listOf("\uD83C\uDF7E소주", "\uD83C\uDF7A맥주", "\uD83C\uDF77와인",
-        "\uD83E\uDD43위스키", "\uD83C\uDF78칵테일", "\uD83C\uDF76전통주")
+    val alcoholOptions = listOf(
+        1 to "\uD83C\uDF7E소주",
+        2 to "\uD83C\uDF78칵테일",
+        3 to "\uD83E\uDD43위스키",
+        4 to "\uD83C\uDF77와인·샴페인"
+    )
+
     val selectedOptions = remember { mutableStateListOf<String>() }
+    val selectedIds = remember { mutableStateListOf<Int>() }
     val isSelectionEnough = selectedOptions.size >= 3
 
     Box(
@@ -119,22 +272,27 @@ fun ProfileStepOne(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                alcoholOptions.forEach { option ->
-                    val isSelected = selectedOptions.contains(option)
+                alcoholOptions.forEach { (id, option) ->
+                    val isSelected = selectedIds.contains(id)
                     Surface(
                         shape = CircleShape,
                         color = if (isSelected) Color(0xFFB2DADA) else Color(0xFFDDF0F0),
                         tonalElevation = if (isSelected) 4.dp else 0.dp,
                         modifier = Modifier
-                            .size(width = 100.dp, height = 57.dp)
-                            .clickable {
+                            .size(width = 105.dp, height = 57.dp)
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null
+                            ) {
                                 if (isSelected) {
+                                    selectedIds.remove(id)
                                     selectedOptions.remove(option)
                                 } else if (selectedOptions.size < 3) {
+                                    selectedIds.add(id)
                                     selectedOptions.add(option)
                                 }
                             }
-                            .padding(horizontal = 2.dp, vertical = 8.dp)
+                            .padding(horizontal = 1.dp, vertical = 8.dp)
                     ) {
                         Box(
                             modifier = Modifier.fillMaxSize(),
@@ -144,7 +302,7 @@ fun ProfileStepOne(
                                 text = option,
                                 fontFamily = PaperlogyFamily,
                                 fontWeight = FontWeight.Normal,
-                                fontSize = 18.sp,
+                                fontSize = 15.sp,
                                 color = Color.Black,
                                 textAlign = TextAlign.Center
                             )
@@ -161,17 +319,20 @@ fun ProfileStepOne(
                 Button(
                     onClick = {
                         if (isSelectionEnough) {
+                            onTypeSelected(selectedIds.toList())
                             onNext()
                         }
                     },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = if (isSelectionEnough) Color(0xFFB2DADA) else Color(0xFFDDF0F0)
+                        containerColor = if (isSelectionEnough) Color(0xFFB2DADA) else Color(
+                            0xFFDDF0F0
+                        )
                     ),
                     shape = RoundedCornerShape(10.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(48.dp)
-                )  {
+                ) {
                     Text(
                         "다음",
                         fontFamily = PaperlogyFamily,
@@ -185,12 +346,17 @@ fun ProfileStepOne(
     }
 }
 
+
 @Composable
 fun ProfileStepTwo(
     onValueSelected: (Int) -> Unit,
     onNext: () -> Unit
 ) {
     val levels = listOf("고도수", "중도수", "저도수")
+    val descriptions = listOf(
+        "최저 도수 기준 25% 초과",
+        "최저 도수 기준 15% 초과~25% 이하", "최저 도수 기준 15% 이하"
+    )
     var sliderValue by remember { mutableFloatStateOf(1f) }
     val selectedIndex = sliderValue.roundToInt()
     val isSelectionMade = sliderValue in 0f..2f
@@ -232,15 +398,15 @@ fun ProfileStepTwo(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(240.dp),
+                .height(300.dp),
             contentAlignment = Alignment.CenterStart
         ) {
             Box(
                 modifier = Modifier
                     .width(4.dp)
-                    .fillMaxHeight()
+                    .height(230.dp)
                     .align(Alignment.Center)
-                    .offset(x = (-159).dp)
+                    .offset(x = (-168).dp)
                     .background(Color(0xFFDDF0F0), shape = RoundedCornerShape(4.dp))
             )
             Slider(
@@ -250,11 +416,11 @@ fun ProfileStepTwo(
                 valueRange = 0f..2f,
                 steps = 1,
                 modifier = Modifier
-                    .height(10.dp)
-                    .width(220.dp)
+                    .height(2.dp)
+                    .width(240.dp)
                     .rotate(90f)
                     .align(Alignment.CenterStart)
-                    .offset(y = 92.dp),
+                    .offset(y = 110.dp),
                 colors = SliderDefaults.colors(
                     activeTrackColor = Color.Transparent,
                     inactiveTrackColor = Color.Transparent,
@@ -266,7 +432,7 @@ fun ProfileStepTwo(
                 modifier = Modifier
                     .fillMaxHeight()
                     .align(Alignment.CenterStart)
-                    .offset(x = (-37).dp)
+                    .offset(x = (-46).dp)
             ) {
                 levels.forEachIndexed { index, label ->
                     Row(
@@ -285,13 +451,23 @@ fun ProfileStepTwo(
                                 )
                         )
                         Spacer(modifier = Modifier.width(12.dp))
-                        Text(
-                            text = label,
-                            fontFamily = PaperlogyFamily,
-                            fontWeight = FontWeight.Normal,
-                            fontSize = 24.sp,
-                            color = Color.Black,
-                        )
+                        Column {
+                            Text(
+                                text = label,
+                                fontFamily = PaperlogyFamily,
+                                fontWeight = FontWeight.Normal,
+                                fontSize = 24.sp,
+                                color = Color.Black,
+                            )
+                            Spacer(modifier = Modifier.height(6.dp)) // 설명 텍스트와 간격
+                            Text(
+                                text = descriptions.getOrNull(index) ?: "",
+                                fontFamily = PaperlogyFamily,
+                                fontWeight = FontWeight.Normal,
+                                fontSize = 12.sp,
+                                color = Color(0xFF838383),
+                            )
+                        }
                     }
                 }
             }
@@ -304,7 +480,10 @@ fun ProfileStepTwo(
         ) {
             Button(
                 onClick = {
-                    if (isSelectionMade) onNext()
+                    if (isSelectionMade) {
+                        onValueSelected(selectedIndex + 1) // 🔼 선택값 전달!
+                        onNext()
+                    }
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFFB2DADA)
@@ -326,15 +505,28 @@ fun ProfileStepTwo(
     }
 }
 
+
 @Composable
 fun ProfileStepThree(
-    onNext: () -> Unit
+    onTagSelected: (List<Int>) -> Unit,
+    onNext: () -> Unit,
+    viewModel: TagViewModel
 ) {
-    val alcoholOptions = listOf("깔끔한", "부드러운", "드라이", "과일향", "오크향", "가벼운 오크향", "허브향",
-        "톡 쏘는", "진한 바디감", "캐러맬", "가벼운 바디감", "꽃향", "발포성", "초콜릿향", "달콤한 여운", "짭짤한",
-        "견과류향", "은은한 곡물향", "달콤한", "부드러운 목넘김")
+//    val alcoholOptions = listOf("깔끔한", "부드러운", "드라이", "과일향", "오크향", "가벼운 오크향", "허브향",
+//        "톡 쏘는", "진한 바디감", "캐러맬", "가벼운 바디감", "꽃향", "발포성", "초콜릿향", "달콤한 여운", "짭짤한",
+//        "견과류향", "은은한 곡물향", "달콤한", "부드러운 목넘김")
+    val tagList by viewModel.tagList.collectAsState()
+    val alcoholOptions = tagList.map { it.name }
     val selectedOptions = remember { mutableStateListOf<String>() }
     val isSelectionEnough = selectedOptions.size >= 5
+
+    LaunchedEffect(Unit) {
+        val token = TokenProvider.getRefreshToken()
+        if (!token.isNullOrBlank()) {
+            viewModel.fetchTags("Bearer $token")
+        }
+    }
+
 
     Box(
         modifier = Modifier
@@ -377,46 +569,55 @@ fun ProfileStepThree(
             )
             Spacer(modifier = Modifier.height(40.dp))
 
-            FlowRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy((-8).dp, Alignment.Start),
-                verticalArrangement = Arrangement.spacedBy((-6).dp)
+            Box(
+                modifier = Modifier
+                    .height(460.dp) // 고정 높이
+                    .verticalScroll(rememberScrollState()) // 세로 스크롤 적용
             ) {
-                alcoholOptions.forEach { option ->
-                    val isSelected = selectedOptions.contains(option)
-                    Surface(
-                        shape = CircleShape,
-                        color = if (isSelected) Color(0xFFB2DADA) else Color(0xFFDDF0F0),
-                        tonalElevation = if (isSelected) 4.dp else 0.dp,
-                        modifier = Modifier
-//                            .size(width = 100.dp, height = 57.dp)
-                            .height(57.dp)
-                            .defaultMinSize(minWidth = 100.dp)
-                            .wrapContentWidth(unbounded = true)
-                            .clickable {
-                                if (isSelected) {
-                                    selectedOptions.remove(option)
-                                } else if (selectedOptions.size < 5) {
-                                    selectedOptions.add(option)
-                                }
-                            }
-                            .padding(horizontal = 2.dp, vertical = 8.dp)
-                    ) {
-                        Box(
-//                            modifier = Modifier.fillMaxSize(),
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy((4).dp, Alignment.Start),
+                    verticalArrangement = Arrangement.spacedBy((2).dp)
+                ) {
+                    alcoholOptions.forEach { option ->
+                        val isSelected = selectedOptions.contains(option)
+                        Surface(
+                            shape = CircleShape,
+                            color = if (isSelected) Color(0xFFB2DADA) else Color(0xFFDDF0F0),
+                            tonalElevation = if (isSelected) 4.dp else 0.dp,
                             modifier = Modifier
-                                .padding(horizontal = 15.dp, vertical = 5.dp),
-                            contentAlignment = Alignment.Center
+//                            .size(width = 100.dp, height = 57.dp)
+                                .height(57.dp)
+                                .defaultMinSize(minWidth = 100.dp)
+                                .wrapContentWidth(unbounded = true)
+                                .clickable(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = null
+                                ) {
+                                    if (isSelected) {
+                                        selectedOptions.remove(option)
+                                    } else {
+                                        selectedOptions.add(option)
+                                    }
+                                }
+                                .padding(horizontal = 2.dp, vertical = 8.dp)
                         ) {
-                            Text(
-                                text = option,
-                                fontFamily = PaperlogyFamily,
-                                fontWeight = FontWeight.Normal,
-                                fontSize = 14.sp,
-                                color = Color.Black,
-                                textAlign = TextAlign.Center,
-                                maxLines = 1
-                            )
+                            Box(
+//                            modifier = Modifier.fillMaxSize(),
+                                modifier = Modifier
+                                    .padding(horizontal = 15.dp, vertical = 5.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = option,
+                                    fontFamily = PaperlogyFamily,
+                                    fontWeight = FontWeight.Normal,
+                                    fontSize = 14.sp,
+                                    color = Color.Black,
+                                    textAlign = TextAlign.Center,
+                                    maxLines = 1
+                                )
+                            }
                         }
                     }
                 }
@@ -430,6 +631,10 @@ fun ProfileStepThree(
                 Button(
                     onClick = {
                         if (isSelectionEnough) {
+                            val selectedTagIds = selectedOptions.mapNotNull { name ->
+                                tagList.find { it.name == name }?.id
+                            }
+                            onTagSelected(selectedTagIds) // ⬅ 선택한 태그 ID 넘김
                             onNext()
                         }
                     },
@@ -441,7 +646,7 @@ fun ProfileStepThree(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(48.dp)
-                )  {
+                ) {
                     Text(
                         "확인",
                         fontFamily = PaperlogyFamily,

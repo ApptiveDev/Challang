@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Liquor Level", description = "도수 등급 API")
@@ -22,8 +23,8 @@ public class LiquorLevelController {
 
     private final LiquorLevelService liquorLevelService;
 
-    // TODO: 관리자만 접근 가능하게
     @Operation(summary = "[관리자] 도수 등급 생성", description = "새로운 도수 등급을 등록합니다.")
+    @PreAuthorize("hasRole('ADMIN')")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "도수 등급 생성 성공"),
             @ApiResponse(responseCode = "400", description = "요청값 유효성 검증 실패"),
@@ -57,6 +58,7 @@ public class LiquorLevelController {
     }
 
     @Operation(summary = "[관리자] 도수 등급 수정", description = "특정 도수 등급의 이름을 수정합니다.")
+    @PreAuthorize("hasRole('ADMIN')")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "도수 등급 수정 성공"),
             @ApiResponse(responseCode = "400", description = "요청값 유효성 검증 실패"),
@@ -73,6 +75,7 @@ public class LiquorLevelController {
     }
 
     @Operation(summary = "[관리자] 도수 등급 삭제", description = "특정 도수 등급을 삭제합니다.")
+    @PreAuthorize("hasRole('ADMIN')")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "도수 등급 삭제 성공"),
             @ApiResponse(responseCode = "404", description = "해당 ID의 도수 등급이 존재하지 않음")

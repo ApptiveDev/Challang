@@ -22,6 +22,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.challang.backend.liquor.dto.response.TagStatDto; // TagStatDto import
+import com.challang.backend.review.repository.ReviewTagRepository; // ReviewTagRepository 주입
+
+import java.util.Collections;
+import java.util.Map;
+import java.util.stream.Collectors;
+import org.springframework.scheduling.annotation.Async; // 비동기 처리를 위해 추가
+
 
 @Service
 @Transactional
@@ -34,6 +42,7 @@ public class LiquorService {
     private final TagRepository tagRepository;
     private final LiquorTagRepository liquorTagRepository;
     private final ReviewRepository reviewRepository;
+    private final ReviewTagRepository reviewTagRepository;
     private final S3Service s3Service;
 
     @Value("${cloud.aws.s3.url}")
@@ -52,7 +61,6 @@ public class LiquorService {
                 .name(request.name())
                 .tastingNote(request.tastingNote())
                 .origin(request.origin())
-                .color(request.color())
                 .minAbv(request.minAbv())
                 .maxAbv(request.maxAbv())
                 .level(level)
@@ -67,21 +75,26 @@ public class LiquorService {
         // saved.getLiquorTags().addAll(tags); // 같은 트랜잭션 내 사용 시 필수
         liquorTagRepository.saveAll(tags);
 
-        return LiquorResponse.fromEntity(saved, s3BaseUrl);
+        return LiquorResponse.fromEntity(saved, s3BaseUrl, Collections.emptyList());
     }
 
     // 주류 단건 조회
     @Transactional(readOnly = true)
     public LiquorResponse findById(Long id) {
-        return LiquorResponse.fromEntity(getLiquorById(id), s3BaseUrl);
+        Liquor liquor = getLiquorById(id);
+
+        List<TagStatDto> topTagStats = reviewTagRepository.findTopTagStatsByLiquorId(id, PageRequest.of(0, 3));
+
+        // fromEntity 메서드 시그니처 변경 필요
+        return LiquorResponse.fromEntity(liquor, s3BaseUrl, topTagStats);
     }
 
     // 주류 전체 조회
     @Transactional(readOnly = true)
-    public LiquorListResponse findAll(String cursorName, Integer pageSize) {
+    public LiquorListResponse findAll(String cursorName, Integer pageSize,  String keyword) {
         Pageable pageable = PageRequest.of(0, pageSize + 1); // +1: 다음 페이지 여부 확인용
 
-        List<Liquor> liquors = liquorRepository.findAllWithTagsByCursor(cursorName, pageable);
+        List<Liquor> liquors = liquorRepository.findAllWithTagsByCursor(cursorName, keyword, pageable);
 
         boolean hasNext = liquors.size() > pageSize;
         if (hasNext) {
@@ -92,12 +105,28 @@ public class LiquorService {
 
         return new LiquorListResponse(
                 liquors.stream()
-                        .map(liquor -> LiquorResponse.fromEntity(liquor, s3BaseUrl)).toList(),
+                        .map(liquor -> {
+                            List<TagStatDto> stats = Collections.emptyList();
+                            return LiquorResponse.fromEntity(liquor, s3BaseUrl, stats);
+                        }).toList(),
                 nextCursor,
                 hasNext
         );
     }
 
+    @Async // @EnableAsync 설정 필요
+    @Transactional
+    public void updateLiquorStats(Long liquorId) {
+        Liquor liquor = liquorRepository.findById(liquorId)
+                .orElseThrow(() -> new BaseException(LiquorCode.LIQUOR_NOT_FOUND));
+
+        // ⭐ 평균 평점 및 리뷰 수 계산
+        Double newAverageRating = reviewRepository.calculateAverageRatingByLiquorId(liquorId).orElse(0.0);
+        int newReviewCount = reviewRepository.countByLiquorId(liquorId);
+
+        // ⭐ Liquor 엔티티에 업데이트
+        liquor.updateAverageRating(newAverageRating, newReviewCount);
+    }
 
     // 주류 수정
     public LiquorResponse update(Long id, LiquorUpdateRequest request) {

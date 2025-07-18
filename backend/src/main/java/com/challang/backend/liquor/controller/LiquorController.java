@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Liquor", description = "주류 API")
@@ -21,8 +22,8 @@ public class LiquorController {
 
     private final LiquorService liquorService;
 
-    // TODO: 관리자만 접근 가능하게
     @Operation(summary = "[관리자] 주류 등록", description = "새로운 주류를 등록합니다.")
+    @PreAuthorize("hasRole('ADMIN')")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "주류 등록 성공"),
             @ApiResponse(responseCode = "400", description = "요청값 유효성 검증 실패"),
@@ -45,21 +46,22 @@ public class LiquorController {
         return ResponseEntity.ok(new BaseResponse<>(response));
     }
 
-    @Operation(summary = "주류 전체 조회", description = "이름 기준 커서 방식으로 주류 목록을 조회합니다.")
+    @Operation(summary = "주류 전체 조회", description = "이름 또는 태그 기준 키워드 검색과 커서 방식으로 주류 목록을 조회합니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "주류 전체 조회 성공")
     })
     @GetMapping
     public ResponseEntity<BaseResponse<LiquorListResponse>> findAll(
             @RequestParam(required = false) String cursorName,
-            @RequestParam(defaultValue = "10") Integer pageSize
+            @RequestParam(defaultValue = "10") Integer pageSize,
+            @RequestParam(required = false) String keyword
     ) {
-        LiquorListResponse response = liquorService.findAll(cursorName, pageSize);
+        LiquorListResponse response = liquorService.findAll(cursorName, pageSize, keyword);
         return ResponseEntity.ok(new BaseResponse<>(response));
     }
 
-    // TODO: 관리자만 접근 가능하게
     @Operation(summary = "[관리자] 주류 수정", description = "주류 정보를 수정합니다.")
+    @PreAuthorize("hasRole('ADMIN')")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "주류 수정 성공"),
             @ApiResponse(responseCode = "400", description = "요청값 유효성 검증 실패"),
@@ -76,8 +78,8 @@ public class LiquorController {
     }
 
 
-    // TODO: 관리자만 접근 가능하게
     @Operation(summary = "[관리자] 주류 삭제", description = "특정 주류를 삭제합니다.")
+    @PreAuthorize("hasRole('ADMIN')")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "주류 삭제 성공"),
             @ApiResponse(responseCode = "404", description = "해당 주류가 존재하지 않음")
