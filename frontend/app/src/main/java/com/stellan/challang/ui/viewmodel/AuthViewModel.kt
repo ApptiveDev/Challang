@@ -17,7 +17,6 @@ class AuthViewModel(
     private val _isLoggedIn = MutableStateFlow(false)
     val isLoggedIn: StateFlow<Boolean> = _isLoggedIn
 
-    // safeApiCall 함수 추가 (private)
     private suspend fun <T> safeApiCall(
         apiCall: suspend () -> Response<T>,
         onUnauthorized: () -> Unit
@@ -102,10 +101,10 @@ class AuthViewModel(
         nickname: String,
         gender: Int,
         birthDate: String,
-        onSuccess: (Boolean) -> Unit, // 신규 유저인지
+        onSuccess: (Boolean) -> Unit,
         onError: (String) -> Unit,
         onUnauthorized: (() -> Unit)? = null,
-        onRetry: ((String) -> Unit)? = null // 닉네임 중복 시 재생성
+        onRetry: ((String) -> Unit)? = null
     ) {
         viewModelScope.launch {
             try {
@@ -120,12 +119,11 @@ class AuthViewModel(
                 val signupResponse = safeApiCall(
                     apiCall = { apiService.kakaoSignup(request) },
                     onUnauthorized = { onUnauthorized?.invoke() }
-                ) ?: return@launch  // 401 처리 후 null일 경우 중단
+                ) ?: return@launch
 
                 if (signupResponse.isSuccessful && signupResponse.body()?.isSuccess == true) {
                     val success = signupResponse.body()?.result ?: false
                     if (success) {
-                        // 회원가입 성공 후 로그인 호출
                         val signinResponse = safeApiCall(
                             apiCall = { apiService.kakaoSignin(KakaoSigninRequest(kakaoAccessToken)) },
                             onUnauthorized = { onUnauthorized?.invoke() }
@@ -136,7 +134,7 @@ class AuthViewModel(
                             if (tokens != null) {
                                 TokenProvider.setAccessToken(tokens.accessToken)
                                 TokenProvider.setRefreshToken(tokens.refreshToken)
-                                onSuccess(true) // 신규 유저 & 로그인 성공
+                                onSuccess(true)
                             } else {
                                 onError("로그인 토큰 응답이 비어 있어요")
                             }
@@ -147,12 +145,11 @@ class AuthViewModel(
                         onError("회원가입 실패: 서버에서 false 반환")
                     }
                 } else {
-                    // 닉네임 중복 체크
                     val errorBody = signupResponse.errorBody()?.string()
                     if (errorBody?.contains("닉네임", ignoreCase = true) == true &&
                         errorBody.contains("중복", ignoreCase = true)
                     ) {
-                        onRetry?.invoke("DUPLICATED") // 콜백으로 UI에서 닉네임 재생성
+                        onRetry?.invoke("DUPLICATED")
                     } else {
                         onError("회원가입 실패: ${signupResponse.code()}")
                     }

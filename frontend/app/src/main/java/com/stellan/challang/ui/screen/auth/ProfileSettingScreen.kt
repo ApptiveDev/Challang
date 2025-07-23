@@ -48,10 +48,7 @@ import androidx.compose.runtime.mutableFloatStateOf
 
 import androidx.compose.animation.core.*
 import kotlin.math.*
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.runtime.remember
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import com.stellan.challang.ui.viewmodel.TagViewModel
@@ -60,10 +57,6 @@ import  com.stellan.challang.data.repository.TagRepository
 import com.stellan.challang.data.model.auth.TokenProvider
 import com.stellan.challang.data.model.Preference.PreferenceRequest
 import com.stellan.challang.data.repository.PreferenceRepository
-import  kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import  kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import android.util.Log
 import com.stellan.challang.ui.viewmodel.PreferenceViewModel
 
@@ -162,7 +155,6 @@ fun ProfileSettingScreen(
     val submitSuccess by preferenceViewModel.submitSuccess.collectAsState()
     val errorMessage by preferenceViewModel.errorMessage.collectAsState()
 
-    // ✅ submit 성공 시 콜백 호출
     LaunchedEffect(submitSuccess) {
         if (submitSuccess == true) {
             onProfileComplete()
@@ -204,7 +196,6 @@ fun ProfileSettingScreen(
         )
     }
 
-    // ✅ 에러 메시지 로그 (선택)
     errorMessage?.let {
         Log.e("PreferenceSubmit", "에러: $it")
     }
@@ -276,7 +267,8 @@ fun ProfileStepOne(
                     val isSelected = selectedIds.contains(id)
                     Surface(
                         shape = CircleShape,
-                        color = if (isSelected) Color(0xFFB2DADA) else Color(0xFFDDF0F0),
+                        color = if (isSelected) Color(0xFFB2DADA)
+                        else Color(0xFFDDF0F0),
                         tonalElevation = if (isSelected) 4.dp else 0.dp,
                         modifier = Modifier
                             .size(width = 105.dp, height = 57.dp)
@@ -324,9 +316,8 @@ fun ProfileStepOne(
                         }
                     },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = if (isSelectionEnough) Color(0xFFB2DADA) else Color(
-                            0xFFDDF0F0
-                        )
+                        containerColor = if (isSelectionEnough) Color(0xFFB2DADA)
+                        else Color(0xFFDDF0F0)
                     ),
                     shape = RoundedCornerShape(10.dp),
                     modifier = Modifier
@@ -459,7 +450,7 @@ fun ProfileStepTwo(
                                 fontSize = 24.sp,
                                 color = Color.Black,
                             )
-                            Spacer(modifier = Modifier.height(6.dp)) // 설명 텍스트와 간격
+                            Spacer(modifier = Modifier.height(6.dp))
                             Text(
                                 text = descriptions.getOrNull(index) ?: "",
                                 fontFamily = PaperlogyFamily,
@@ -481,7 +472,7 @@ fun ProfileStepTwo(
             Button(
                 onClick = {
                     if (isSelectionMade) {
-                        onValueSelected(selectedIndex + 1) // 🔼 선택값 전달!
+                        onValueSelected(selectedIndex + 1)
                         onNext()
                     }
                 },
@@ -512,9 +503,6 @@ fun ProfileStepThree(
     onNext: () -> Unit,
     viewModel: TagViewModel
 ) {
-//    val alcoholOptions = listOf("깔끔한", "부드러운", "드라이", "과일향", "오크향", "가벼운 오크향", "허브향",
-//        "톡 쏘는", "진한 바디감", "캐러맬", "가벼운 바디감", "꽃향", "발포성", "초콜릿향", "달콤한 여운", "짭짤한",
-//        "견과류향", "은은한 곡물향", "달콤한", "부드러운 목넘김")
     val tagList by viewModel.tagList.collectAsState()
     val alcoholOptions = tagList.map { it.name }
     val selectedOptions = remember { mutableStateListOf<String>() }
@@ -571,8 +559,8 @@ fun ProfileStepThree(
 
             Box(
                 modifier = Modifier
-                    .height(460.dp) // 고정 높이
-                    .verticalScroll(rememberScrollState()) // 세로 스크롤 적용
+                    .height(460.dp)
+                    .verticalScroll(rememberScrollState())
             ) {
                 FlowRow(
                     modifier = Modifier.fillMaxWidth(),
@@ -583,10 +571,10 @@ fun ProfileStepThree(
                         val isSelected = selectedOptions.contains(option)
                         Surface(
                             shape = CircleShape,
-                            color = if (isSelected) Color(0xFFB2DADA) else Color(0xFFDDF0F0),
+                            color = if (isSelected) Color(0xFFB2DADA)
+                            else Color(0xFFDDF0F0),
                             tonalElevation = if (isSelected) 4.dp else 0.dp,
                             modifier = Modifier
-//                            .size(width = 100.dp, height = 57.dp)
                                 .height(57.dp)
                                 .defaultMinSize(minWidth = 100.dp)
                                 .wrapContentWidth(unbounded = true)
@@ -603,7 +591,6 @@ fun ProfileStepThree(
                                 .padding(horizontal = 2.dp, vertical = 8.dp)
                         ) {
                             Box(
-//                            modifier = Modifier.fillMaxSize(),
                                 modifier = Modifier
                                     .padding(horizontal = 15.dp, vertical = 5.dp),
                                 contentAlignment = Alignment.Center
@@ -634,7 +621,7 @@ fun ProfileStepThree(
                             val selectedTagIds = selectedOptions.mapNotNull { name ->
                                 tagList.find { it.name == name }?.id
                             }
-                            onTagSelected(selectedTagIds) // ⬅ 선택한 태그 ID 넘김
+                            onTagSelected(selectedTagIds)
                             onNext()
                         }
                     },
@@ -760,8 +747,6 @@ fun ProfileStepFour(
                         .offset(x = 20.dp - wiggleX, y = 425.dp + wiggleY)
                         .background(Color(0xFFB2DADA), shape = CircleShape)
                 )
-
-
             }
         }
     }

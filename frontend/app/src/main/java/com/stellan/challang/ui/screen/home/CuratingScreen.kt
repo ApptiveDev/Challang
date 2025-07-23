@@ -3,6 +3,7 @@ package com.stellan.challang.ui.screen.home
 import android.annotation.SuppressLint
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -56,11 +57,14 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -77,6 +81,7 @@ import com.stellan.challang.ui.util.formatAbv
 import com.stellan.challang.ui.viewmodel.DrinkViewModel
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
+import kotlin.random.Random
 
 @SuppressLint("MutableCollectionMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -93,7 +98,8 @@ fun CuratingScreen(onDetail: (drink: Drink) -> Unit) {
     val hasSeenGuide by context.hasSeenGuideFlow().collectAsState(initial = false)
     val showGuide = !hasSeenGuide
 
-    val drinkViewModel = remember { DrinkViewModel(DrinkRepository(ApiClient.drinkApi)) }
+    val drinkViewModel = remember { DrinkViewModel(
+        DrinkRepository(ApiClient.drinkApi)) }
     val drinks by drinkViewModel.drinks.collectAsState()
 
     LaunchedEffect(Unit) {
@@ -251,16 +257,16 @@ fun CuratingScreen(onDetail: (drink: Drink) -> Unit) {
                         Modifier
                             .fillMaxSize()
                             .padding(27.dp)
-//                            .offset {
-//                                IntOffset(
-//                                    offsetX.value.roundToInt(),
-//                                    offsetY.value.roundToInt()
-//                                )
-//                            }
+                            .offset {
+                                IntOffset(
+                                    offsetX.value.roundToInt(),
+                                    offsetY.value.roundToInt()
+                                )
+                            }
                             .pointerInput(currentIndex) {
                                 detectDragGestures(
                                     onDragEnd = {
-                                        val threshold = size.height * 0.25f
+                                        val threshold = size.height * 0.15f
                                         when {
                                             offsetY.value > threshold -> {
                                                 history = history + currentIndex
@@ -305,8 +311,10 @@ fun CuratingScreen(onDetail: (drink: Drink) -> Unit) {
 
                                             else -> {
                                                 scope.launch {
-                                                    offsetX.animateTo(0f, tween(300))
-                                                    offsetY.animateTo(0f, tween(300))
+                                                    offsetX.animateTo(0f,
+                                                        tween(300))
+                                                    offsetY.animateTo(0f,
+                                                        tween(300))
                                                 }
                                             }
                                         }
@@ -333,7 +341,9 @@ fun CuratingScreen(onDetail: (drink: Drink) -> Unit) {
                             ),
                         colors = CardDefaults.cardColors(containerColor = Color.Transparent)
                     ) {
-                        Box(Modifier.fillMaxSize()) {
+                        var boxSize by remember { mutableStateOf(IntSize.Zero) }
+
+                        Box(Modifier.fillMaxSize().onSizeChanged { boxSize = it }) {
                             AsyncImage(
                                 model = drink.imageUrl,
                                 contentDescription = null,
@@ -425,6 +435,80 @@ fun CuratingScreen(onDetail: (drink: Drink) -> Unit) {
                                             tint = Color(0xFF6CD0D8),
                                             modifier = Modifier
                                                 .size(35.dp)
+                                        )
+                                    }
+                                }
+                            }
+                            if (boxSize.width > 0 && boxSize.height > 0) {
+                                val density = LocalDensity.current
+
+                                val imageTopPx    = with(density){ 150.dp.toPx() }
+                                val imageHeightPx = with(density){ 320.dp.toPx() }
+                                val boxWidthPx    = boxSize.width.toFloat()
+
+                                val labels = drink.liquorTags.map { it.tagName }.take(8)
+                                val leftLabels  = labels.take(4)
+                                val rightLabels = labels.takeLast(4)
+
+                                val stripHeightPx = imageHeightPx / 4f
+
+                                val xLeftMinPx  = boxWidthPx * 0.00f
+                                val xLeftMaxPx  = boxWidthPx * 0.10f
+                                val xRightMinPx = boxWidthPx * 0.65f
+                                val xRightMaxPx = boxWidthPx * 0.75f
+
+                                (0 until 4).forEach { idx ->
+                                    val yPx = imageTopPx + stripHeightPx * idx + stripHeightPx / 2f
+
+                                    val xLeftPx = Random.nextFloat() *
+                                            (xLeftMaxPx - xLeftMinPx) + xLeftMinPx
+                                    Box(
+                                        Modifier.offset(
+                                            x = with(density) { xLeftPx.toDp() },
+                                            y = with(density) { yPx.toDp() }
+                                        )
+                                    ) {
+                                        SuggestionChip(
+                                            onClick = { },
+                                            enabled = false,
+                                            label = { Text(
+                                                leftLabels[idx],
+                                                fontSize = 12.sp,
+                                                color = Color.Black
+                                            ) },
+                                            colors = SuggestionChipDefaults.suggestionChipColors(
+                                                disabledContainerColor = if (Random.nextBoolean())
+                                                    Color(0xFFEFFAFB)
+                                                else Color(0xFFFFEDDC)
+                                            ),
+                                            border = BorderStroke(0.dp, Color.Transparent),
+                                            shape = RoundedCornerShape(20.dp)
+                                        )
+                                    }
+
+                                    val xRightPx = Random.nextFloat() *
+                                            (xRightMaxPx - xRightMinPx) + xRightMinPx
+                                    Box(
+                                        Modifier.offset(
+                                            x = with(density) { xRightPx.toDp() },
+                                            y = with(density) { yPx.toDp() }
+                                        )
+                                    ) {
+                                        SuggestionChip(
+                                            onClick = { },
+                                            enabled = false,
+                                            label = { Text(
+                                                rightLabels[idx],
+                                                fontSize = 12.sp,
+                                                color = Color.Black
+                                            ) },
+                                            colors = SuggestionChipDefaults.suggestionChipColors(
+                                                disabledContainerColor = if (Random.nextBoolean())
+                                                    Color(0xFFEFFAFB)
+                                                else Color(0xFFFFEDDC)
+                                            ),
+                                            border = BorderStroke(0.dp, Color.Transparent),
+                                            shape = RoundedCornerShape(20.dp)
                                         )
                                     }
                                 }

@@ -5,7 +5,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -94,20 +93,23 @@ fun LoginScreen(
                         onClick = {
                             UserApiClient.instance.loginWithKakaoAccount(context) { token, error ->
                                 if (error != null || token == null) {
-                                    Toast.makeText(context, "카카오 로그인 실패", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, "카카오 로그인 실패",
+                                        Toast.LENGTH_SHORT).show()
                                 } else {
                                     val kakaoAccessToken = token.accessToken
                                     coroutineScope.launch {
                                         viewModel.kakaoLogin(
                                             kakaoAccessToken = kakaoAccessToken,
                                             onSuccess = { isNewUser, isPreferenceSet ->
-                                                onLoginSuccess(isNewUser, kakaoAccessToken, isPreferenceSet)  // ✅ 토큰도 같이 넘김
+                                                onLoginSuccess(isNewUser, kakaoAccessToken,
+                                                    isPreferenceSet)
                                             },
                                             onNeedSignup = {
                                                 onNeedSignup(kakaoAccessToken)
                                             },
                                             onError = {
-                                                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                                                Toast.makeText(context, it,
+                                                    Toast.LENGTH_SHORT).show()
                                             }
                                         )
                                     }

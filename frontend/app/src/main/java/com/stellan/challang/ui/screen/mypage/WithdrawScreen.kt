@@ -65,7 +65,6 @@ fun WithdrawScreen(onDone: () -> Unit) {
     val authViewModel: AuthViewModel = viewModel(
         factory = AuthViewModelFactory(ApiClient.api)
     )
-    // Composable 내부에서 생성 (단일 화면용)
     val navController = rememberNavController()
 
     val context = LocalContext.current
@@ -340,7 +339,7 @@ fun WithdrawScreen(onDone: () -> Unit) {
                         showConfirmDialog = false
 
                         coroutineScope.launch {
-                            val reasonId = reasonsMap[selectedReason] ?: 1  // 기본값 1
+                            val reasonId = reasonsMap[selectedReason] ?: 1
                             authViewModel.withdraw(
                                 reason = reasonId,
                                 onSuccess = {
@@ -351,7 +350,7 @@ fun WithdrawScreen(onDone: () -> Unit) {
                                 },
                                 onUnauthorized = {
                                     coroutineScope.launch {
-                                        delay(100) // 한 프레임 대기
+                                        delay(100)
                                         navController.navigate("auth") {
                                             popUpTo("main") { inclusive = true }
                                         }
@@ -367,8 +366,8 @@ fun WithdrawScreen(onDone: () -> Unit) {
             if (showDoneDialog) {
                 WithdrawDoneDialog(
                     onAcknowledge = {
-//                        authRepository.clearTokens() // 토큰 삭제
-                        onDone() // 로그인 화면으로 이동
+//                        authRepository.clearTokens()
+                        onDone()
                         showDoneDialog = false
                     }
                 )

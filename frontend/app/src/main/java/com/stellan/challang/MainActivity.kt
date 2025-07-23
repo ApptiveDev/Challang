@@ -69,9 +69,3 @@ suspend fun Context.setGuideShown() {
         prefs[GUIDE_SHOWN_KEY] = true
     }
 }
-
-suspend fun Context.setGuideShown(value: Boolean) {
-    dataStore.edit { prefs ->
-        prefs[GUIDE_SHOWN_KEY] = value
-    }
-}
