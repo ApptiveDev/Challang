@@ -1,5 +1,6 @@
 package com.stellan.challang.ui.screen.auth
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -94,20 +95,23 @@ fun LoginScreen(
                         onClick = {
                             UserApiClient.instance.loginWithKakaoAccount(context) { token, error ->
                                 if (error != null || token == null) {
-                                    Toast.makeText(context, "카카오 로그인 실패", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, "카카오 로그인 실패",
+                                        Toast.LENGTH_SHORT).show()
                                 } else {
                                     val kakaoAccessToken = token.accessToken
                                     coroutineScope.launch {
                                         viewModel.kakaoLogin(
                                             kakaoAccessToken = kakaoAccessToken,
                                             onSuccess = { isNewUser, isPreferenceSet ->
-                                                onLoginSuccess(isNewUser, kakaoAccessToken, isPreferenceSet)  // ✅ 토큰도 같이 넘김
+                                                onLoginSuccess(isNewUser, kakaoAccessToken,
+                                                    isPreferenceSet)
                                             },
                                             onNeedSignup = {
                                                 onNeedSignup(kakaoAccessToken)
                                             },
                                             onError = {
-                                                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                                                Toast.makeText(context, it,
+                                                    Toast.LENGTH_SHORT).show()
                                             }
                                         )
                                     }

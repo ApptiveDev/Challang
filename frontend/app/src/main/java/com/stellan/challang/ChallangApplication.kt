@@ -8,12 +8,9 @@ class ChallangApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        // okenProvider 초기화 추가
         TokenProvider.init(this)
 
-        // 카카오 SDK 초기화
         KakaoSdk.init(this, "")
-
     }
 }
 

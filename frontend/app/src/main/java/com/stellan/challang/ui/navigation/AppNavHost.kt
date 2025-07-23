@@ -32,7 +32,6 @@ fun AppNavHost(
 
     val isLoggedIn by authViewModel.isLoggedIn.collectAsState()
 
-    // isLoggedIn 상태에 따라 네비게이션 제어
     LaunchedEffect(isLoggedIn) {
         val currentDestination = navController.currentBackStackEntry?.destination?.route
 

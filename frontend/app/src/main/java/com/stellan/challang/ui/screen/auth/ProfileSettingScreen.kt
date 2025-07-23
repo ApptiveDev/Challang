@@ -162,7 +162,6 @@ fun ProfileSettingScreen(
     val submitSuccess by preferenceViewModel.submitSuccess.collectAsState()
     val errorMessage by preferenceViewModel.errorMessage.collectAsState()
 
-    // ✅ submit 성공 시 콜백 호출
     LaunchedEffect(submitSuccess) {
         if (submitSuccess == true) {
             onProfileComplete()
@@ -204,7 +203,6 @@ fun ProfileSettingScreen(
         )
     }
 
-    // ✅ 에러 메시지 로그 (선택)
     errorMessage?.let {
         Log.e("PreferenceSubmit", "에러: $it")
     }

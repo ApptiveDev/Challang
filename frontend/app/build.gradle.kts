@@ -63,10 +63,10 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.foundation)
     implementation(libs.androidx.ui.test.android)
-    implementation(libs.v2.user) // 카카오 로그인
-    implementation(libs.v2.cert) // 카카오 인증서비스
+    implementation(libs.v2.user)
+    implementation(libs.v2.cert)
 
-    implementation(libs.glide) // 이미지 핸들링 라이브러리 Glide
+    implementation(libs.glide)
     implementation(libs.coil.compose)
 
     implementation(libs.retrofit)
@@ -74,13 +74,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.androidx.security.crypto)
-    // build.gradle (app)
     implementation(libs.logging.interceptor)
-
-
-
-
-
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
