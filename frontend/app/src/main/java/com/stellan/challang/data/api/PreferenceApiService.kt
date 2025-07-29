@@ -1,7 +1,7 @@
 package com.stellan.challang.data.api
 
-import com.stellan.challang.data.model.Preference.PreferenceRequest
-import com.stellan.challang.data.model.Preference.PreferenceResponseResponse
+import com.stellan.challang.data.model.preference.PreferenceRequest
+import com.stellan.challang.data.model.preference.PreferenceResponseResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.Header

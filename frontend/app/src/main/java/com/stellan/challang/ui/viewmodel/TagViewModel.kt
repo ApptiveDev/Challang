@@ -2,7 +2,7 @@ package com.stellan.challang.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.stellan.challang.data.model.Tag.Tag
+import com.stellan.challang.data.model.tag.Tag
 import com.stellan.challang.data.repository.TagRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

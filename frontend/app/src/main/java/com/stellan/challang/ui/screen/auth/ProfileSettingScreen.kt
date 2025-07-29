@@ -55,7 +55,7 @@ import com.stellan.challang.ui.viewmodel.TagViewModel
 import com.stellan.challang.data.api.ApiClient
 import  com.stellan.challang.data.repository.TagRepository
 import com.stellan.challang.data.model.auth.TokenProvider
-import com.stellan.challang.data.model.Preference.PreferenceRequest
+import com.stellan.challang.data.model.preference.PreferenceRequest
 import com.stellan.challang.data.repository.PreferenceRepository
 import android.util.Log
 import com.stellan.challang.ui.viewmodel.PreferenceViewModel
