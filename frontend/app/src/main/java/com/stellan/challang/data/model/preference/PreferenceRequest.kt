@@ -1,4 +1,4 @@
-package com.stellan.challang.data.model.Preference
+package com.stellan.challang.data.model.preference
 
 data class PreferenceRequest(
     val typeIds: List<Int>,

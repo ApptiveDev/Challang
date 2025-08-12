@@ -2,7 +2,7 @@ package com.stellan.challang.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.stellan.challang.data.model.Preference.PreferenceRequest
+import com.stellan.challang.data.model.preference.PreferenceRequest
 import com.stellan.challang.data.repository.PreferenceRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

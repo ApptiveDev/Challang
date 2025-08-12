@@ -1,8 +1,8 @@
 package com.stellan.challang.data.repository
 
 import com.stellan.challang.data.api.PreferenceApiService
-import com.stellan.challang.data.model.Preference.PreferenceRequest
-import com.stellan.challang.data.model.Preference.PreferenceResponseResponse
+import com.stellan.challang.data.model.preference.PreferenceRequest
+import com.stellan.challang.data.model.preference.PreferenceResponseResponse
 
 class PreferenceRepository(
     private val apiService: PreferenceApiService

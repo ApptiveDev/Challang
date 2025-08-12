@@ -1,4 +1,4 @@
-package com.stellan.challang.data.model.Tag
+package com.stellan.challang.data.model.tag
 
 data class TagResponse(
     val httpStatus: String,

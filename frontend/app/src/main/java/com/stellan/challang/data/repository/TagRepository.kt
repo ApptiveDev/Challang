@@ -1,7 +1,7 @@
 package com.stellan.challang.data.repository
 
 import com.stellan.challang.data.api.TagApiService
-import com.stellan.challang.data.model.Tag.TagResponse
+import com.stellan.challang.data.model.tag.TagResponse
 
 class TagRepository(
     private val apiService: TagApiService
