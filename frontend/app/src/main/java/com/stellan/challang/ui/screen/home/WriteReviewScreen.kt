@@ -1,29 +1,44 @@
 package com.stellan.challang.ui.screen.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
@@ -36,6 +51,22 @@ fun WriteReviewScreen(
     drinkId: String,
     onSubmit: () -> Unit
 ) {
+    var rating by rememberSaveable { mutableIntStateOf(0) }
+
+    var review by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue(""))
+    }
+    val minLen = 5
+    val maxLen = 300
+    val scroll = rememberScrollState()
+    LaunchedEffect(review.text, review.selection) {
+        val caretAtEnd = review.selection.collapsed &&
+                review.selection.end == review.text.length
+        if (caretAtEnd) {
+            scroll.animateScrollTo(scroll.maxValue)
+        }
+    }
+
     LazyColumn(Modifier.fillMaxWidth()) {
         item {
             Text(
@@ -63,27 +94,16 @@ fun WriteReviewScreen(
                     fontSize = 20.sp
                 )
                 Spacer(Modifier.height(10.dp))
-                StarRating(4, Modifier.align(Alignment.CenterHorizontally))
+                StarRating(
+                    rating = rating,
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    onRatingChanged = { new -> rating = if (new == rating) 0 else new }
+                )
             }
             Spacer(Modifier.height(10.dp))
         }
 
         item {
-            var review by rememberSaveable(stateSaver = TextFieldValue.Saver) {
-                mutableStateOf(TextFieldValue(""))
-            }
-            val minLen = 5
-            val maxLen = 300
-            val scroll = rememberScrollState()
-
-            LaunchedEffect(review.text, review.selection) {
-                val caretAtEnd = review.selection.collapsed &&
-                        review.selection.end == review.text.length
-                if (caretAtEnd) {
-                    scroll.animateScrollTo(scroll.maxValue)
-                }
-            }
-
             Column(
                 Modifier
                     .fillMaxWidth()
@@ -148,6 +168,104 @@ fun WriteReviewScreen(
                     else Color(0xFF868686),
                     modifier = Modifier.align(Alignment.End)
                 )
+            }
+            Spacer(Modifier.height(20.dp))
+        }
+
+        item {
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 30.dp)
+            ) {
+                Row(
+                    Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.Bottom
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Outlined.Image,
+                            contentDescription = null,
+                            modifier = Modifier.size(30.dp)
+                        )
+                        Text(
+                            "사진 첨부",
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 20.sp
+                        )
+                    }
+                    Text(
+                        "0장/ 최대 3장",
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 13.sp,
+                        color = Color(0xFF868686)
+                    )
+                }
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    val cornerRadius = 8.dp
+                    val strokeWidth = 1.5.dp
+                    val dash = 6.dp
+                    val gap = 4.dp
+                    val color = Color(0xFF868686)
+
+                    Box(
+                        Modifier
+                            .size(80.dp)
+                            .clip(RoundedCornerShape(cornerRadius))
+                            .clickable(onClick = {})
+                            .drawBehind {
+                                val stroke = Stroke(
+                                    width = strokeWidth.toPx(),
+                                    pathEffect = PathEffect.dashPathEffect(
+                                        floatArrayOf(dash.toPx(), gap.toPx())
+                                    )
+                                )
+                                drawRoundRect(
+                                    color = color,
+                                    size = size,
+                                    style = stroke,
+                                    cornerRadius = CornerRadius(
+                                        cornerRadius.toPx(), cornerRadius.toPx()
+                                    )
+                                )
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Add,
+                            contentDescription = null,
+                            tint = color,
+                            modifier = Modifier.size(28.dp)
+                        )
+                    }
+                    Box(
+                        Modifier
+                            .size(80.dp)
+                            .background(Color(0xFF868686), shape = RoundedCornerShape(cornerRadius))
+                    ) {
+
+                    }
+                    Box(
+                        Modifier
+                            .size(80.dp)
+                            .background(Color(0xFF868686), shape = RoundedCornerShape(cornerRadius))
+                    ) {
+
+                    }
+                    Box(
+                        Modifier
+                            .size(80.dp)
+                            .background(Color(0xFF868686), shape = RoundedCornerShape(cornerRadius))
+                    ) {
+
+                    }
+                }
             }
         }
     }
