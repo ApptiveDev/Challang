@@ -1,5 +1,9 @@
 package com.stellan.challang.ui.screen.home
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,9 +24,13 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Image
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,6 +38,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -39,11 +49,15 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import coil.compose.AsyncImage
 import com.stellan.challang.ui.component.StarRating
 
 @Composable
@@ -58,14 +72,13 @@ fun WriteReviewScreen(
     }
     val minLen = 5
     val maxLen = 300
-    val scroll = rememberScrollState()
-    LaunchedEffect(review.text, review.selection) {
-        val caretAtEnd = review.selection.collapsed &&
-                review.selection.end == review.text.length
-        if (caretAtEnd) {
-            scroll.animateScrollTo(scroll.maxValue)
-        }
-    }
+
+    var images by rememberSaveable(
+        stateSaver = listSaver(
+            save = { list -> list.map { it.toString() } },
+            restore = { list -> list.map(Uri::parse) }
+        )
+    ) { mutableStateOf(emptyList<Uri>()) }
 
     LazyColumn(Modifier.fillMaxWidth()) {
         item {
@@ -104,6 +117,15 @@ fun WriteReviewScreen(
         }
 
         item {
+            val scroll = rememberScrollState()
+            LaunchedEffect(review.text, review.selection) {
+                val caretAtEnd = review.selection.collapsed &&
+                        review.selection.end == review.text.length
+                if (caretAtEnd) {
+                    scroll.animateScrollTo(scroll.maxValue)
+                }
+            }
+
             Column(
                 Modifier
                     .fillMaxWidth()
@@ -173,6 +195,19 @@ fun WriteReviewScreen(
         }
 
         item {
+            var previewIndex by rememberSaveable { mutableStateOf<Int?>(null) }
+            val maxCount = 3
+            val picker = rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.PickMultipleVisualMedia(maxItems = maxCount),
+                onResult = { uris ->
+                    if (uris.isEmpty()) return@rememberLauncherForActivityResult
+                    val remaining = maxCount - images.size
+                    if (remaining > 0) {
+                        images = images + uris.take(remaining)
+                    }
+                }
+            )
+
             Column(
                 Modifier
                     .fillMaxWidth()
@@ -196,7 +231,7 @@ fun WriteReviewScreen(
                         )
                     }
                     Text(
-                        "0장/ 최대 3장",
+                        "${images.size}장 / 최대 ${maxCount}장",
                         fontWeight = FontWeight.Normal,
                         fontSize = 13.sp,
                         color = Color(0xFF868686)
@@ -214,56 +249,106 @@ fun WriteReviewScreen(
                     val gap = 4.dp
                     val color = Color(0xFF868686)
 
+                    if (images.size < maxCount) {
+                        Box(
+                            Modifier
+                                .size(80.dp)
+                                .clip(RoundedCornerShape(cornerRadius))
+                                .clickable{
+                                    picker.launch(
+                                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                                    )
+                                }
+                                .drawBehind {
+                                    val stroke = Stroke(
+                                        width = strokeWidth.toPx(),
+                                        pathEffect = PathEffect.dashPathEffect(
+                                            floatArrayOf(dash.toPx(), gap.toPx())
+                                        )
+                                    )
+                                    drawRoundRect(
+                                        color = color,
+                                        size = size,
+                                        style = stroke,
+                                        cornerRadius = CornerRadius(
+                                            cornerRadius.toPx(), cornerRadius.toPx()
+                                        )
+                                    )
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Add,
+                                contentDescription = null,
+                                tint = color,
+                                modifier = Modifier.size(28.dp)
+                            )
+                        }
+                    }
+                    images.forEachIndexed { idx, uri ->
+                        Box(
+                            Modifier
+                                .size(80.dp)
+                                .clip(RoundedCornerShape(cornerRadius))
+                                .clickable { previewIndex = idx }
+                        ) {
+                            AsyncImage(
+                                model = uri,
+                                contentDescription = "첨부된 사진 ${idx + 1}",
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
+                    }
+                }
+            }
+            val showPreview = previewIndex != null
+            if (showPreview) {
+                val index = previewIndex!!
+                Dialog(
+                    onDismissRequest = { previewIndex = null },
+                    properties = DialogProperties(usePlatformDefaultWidth = false)
+                ) {
                     Box(
                         Modifier
-                            .size(80.dp)
-                            .clip(RoundedCornerShape(cornerRadius))
-                            .clickable(onClick = {})
-                            .drawBehind {
-                                val stroke = Stroke(
-                                    width = strokeWidth.toPx(),
-                                    pathEffect = PathEffect.dashPathEffect(
-                                        floatArrayOf(dash.toPx(), gap.toPx())
-                                    )
-                                )
-                                drawRoundRect(
-                                    color = color,
-                                    size = size,
-                                    style = stroke,
-                                    cornerRadius = CornerRadius(
-                                        cornerRadius.toPx(), cornerRadius.toPx()
-                                    )
-                                )
-                            },
-                        contentAlignment = Alignment.Center
+                            .fillMaxSize()
+                            .background(Color.Black)
                     ) {
-                        Icon(
-                            imageVector = Icons.Filled.Add,
-                            contentDescription = null,
-                            tint = color,
-                            modifier = Modifier.size(28.dp)
+                        AsyncImage(
+                            model = images[index],
+                            contentDescription = "미리보기",
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(0.dp)
                         )
-                    }
-                    Box(
-                        Modifier
-                            .size(80.dp)
-                            .background(Color(0xFF868686), shape = RoundedCornerShape(cornerRadius))
-                    ) {
-
-                    }
-                    Box(
-                        Modifier
-                            .size(80.dp)
-                            .background(Color(0xFF868686), shape = RoundedCornerShape(cornerRadius))
-                    ) {
-
-                    }
-                    Box(
-                        Modifier
-                            .size(80.dp)
-                            .background(Color(0xFF868686), shape = RoundedCornerShape(cornerRadius))
-                    ) {
-
+                        IconButton(
+                            onClick = { previewIndex = null },
+                            modifier = Modifier
+                                .align(Alignment.TopEnd)
+                                .padding(12.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Close,
+                                contentDescription = "닫기",
+                                tint = Color.White
+                            )
+                        }
+                        FilledTonalButton(
+                            onClick = {
+                                images = images.toMutableList().also { it.removeAt(index) }
+                                previewIndex = null
+                            },
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .padding(bottom = 24.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Delete,
+                                contentDescription = null
+                            )
+                            Spacer(Modifier.width(6.dp))
+                            Text("이 사진 삭제", color = Color.Black)
+                        }
                     }
                 }
             }
