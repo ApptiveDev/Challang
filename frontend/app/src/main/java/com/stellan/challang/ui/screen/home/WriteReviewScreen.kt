@@ -9,6 +9,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,6 +28,9 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Image
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -351,6 +355,60 @@ fun WriteReviewScreen(
                         }
                     }
                 }
+            }
+        }
+
+        item {
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 30.dp, vertical = 20.dp)
+            ) {
+                Row(
+                    Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.Bottom
+                ) {
+                    Text(
+                        "해시태그",
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 20.sp
+                    )
+                    Text(
+                        "최소 1개, 최대 3개 선택해주세요.",
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 13.sp,
+                        color = Color(0xFF868686)
+                    )
+                }
+                FlowRow(
+                    Modifier.fillMaxWidth()
+                ) {
+
+                }
+            }
+        }
+
+        item {
+            Button(
+                onClick = { onSubmit() },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(55.dp)
+                    .padding(horizontal = 30.dp),
+                enabled = true,
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFB2DADA),
+                    disabledContainerColor = Color(0xFFDEEEEE)
+                )
+            ) {
+                Text(
+                    "등록",
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 25.sp,
+                    color = Color.Black
+                )
             }
         }
     }
