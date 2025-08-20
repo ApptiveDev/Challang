@@ -10,7 +10,7 @@ fun NavGraphBuilder.mainNavGraph(rootNavController: NavHostController,
                                  bottomNavController: NavHostController,
                                  drinkViewModel: DrinkViewModel
 ) {
-    homeNavGraph(rootNavController, bottomNavController, drinkViewModel)
+    homeNavGraph(bottomNavController, drinkViewModel)
     composable("archive") { ArchiveScreen() }
     myPageNavGraph(rootNavController, bottomNavController)
 }

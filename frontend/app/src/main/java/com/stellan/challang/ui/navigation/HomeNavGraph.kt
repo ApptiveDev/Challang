@@ -15,7 +15,6 @@ import com.stellan.challang.ui.screen.home.*
 import com.stellan.challang.ui.viewmodel.DrinkViewModel
 
 fun NavGraphBuilder.homeNavGraph(
-    rootNavController: NavHostController,
     bottomNavController: NavHostController,
     drinkViewModel: DrinkViewModel
 ) {
@@ -59,7 +58,7 @@ fun NavGraphBuilder.homeNavGraph(
             val drinkId = backStack.arguments!!.getString("drinkId")!!
             WriteReviewScreen(
                 drinkId = drinkId,
-                onSubmit = { /* 저장 로직 */ rootNavController.popBackStack() }
+                onSubmit = { bottomNavController.popBackStack() }
             )
         }
     }
