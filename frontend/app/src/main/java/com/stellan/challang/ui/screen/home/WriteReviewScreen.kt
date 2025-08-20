@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -29,9 +30,10 @@ import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -41,10 +43,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -57,6 +61,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -83,6 +89,13 @@ fun WriteReviewScreen(
             restore = { list -> list.map(Uri::parse) }
         )
     ) { mutableStateOf(emptyList<Uri>()) }
+
+    val selectedTag = rememberSaveable(
+        saver = listSaver(
+            save = { it.toList() },
+            restore = { it.toMutableStateList() }
+        )
+    ) { mutableStateListOf<String>() }
 
     LazyColumn(Modifier.fillMaxWidth()) {
         item {
@@ -359,6 +372,9 @@ fun WriteReviewScreen(
         }
 
         item {
+            val allTags = listOf("단맛", "산미", "과실향", "허브", "스모키", "스파이시")
+            val maxSelect = 3
+
             Column(
                 Modifier
                     .fillMaxWidth()
@@ -378,13 +394,46 @@ fun WriteReviewScreen(
                         "최소 1개, 최대 3개 선택해주세요.",
                         fontWeight = FontWeight.Normal,
                         fontSize = 13.sp,
-                        color = Color(0xFF868686)
+                        color = if (selectedTag.isEmpty()) Color(0xFFD9534F)
+                        else Color(0xFF868686)
                     )
                 }
+                Spacer(Modifier.height(10.dp))
                 FlowRow(
-                    Modifier.fillMaxWidth()
+                    Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(15.dp),
+                    verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
+                    allTags.forEach { tag ->
+                        val isSelected = tag in selectedTag
+                        val canSelectMore = selectedTag.size < maxSelect
 
+                        FilterChip(
+                            selected = isSelected,
+                            onClick = {
+                                if (isSelected) { selectedTag.remove(tag) }
+                                else if (canSelectMore) { selectedTag.add(tag) }
+                            },
+                            enabled = isSelected || canSelectMore,
+                            label = { Text(
+                                "#$tag",
+                                fontSize = 20.sp,
+                                color = Color.Black,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.fillMaxWidth(),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            ) },
+                            colors = FilterChipDefaults.filterChipColors(
+                                containerColor = Color(0xFFDEEEEE),
+                                selectedContainerColor = Color(0xFFB2DADA),
+                                disabledContainerColor = Color(0xFFDEEEEE)
+                            ),
+                            border = BorderStroke(0.dp, Color.Transparent),
+                            shape = RoundedCornerShape(30.dp),
+                            modifier = Modifier.height(45.dp).width(105.dp)
+                        )
+                    }
                 }
             }
         }
@@ -396,7 +445,7 @@ fun WriteReviewScreen(
                     .fillMaxWidth()
                     .height(55.dp)
                     .padding(horizontal = 30.dp),
-                enabled = true,
+                enabled = review.text.length in minLen..maxLen && selectedTag.isNotEmpty(),
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFFB2DADA),
@@ -410,6 +459,7 @@ fun WriteReviewScreen(
                     color = Color.Black
                 )
             }
+            Spacer(Modifier.height(20.dp))
         }
     }
 }
