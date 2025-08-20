@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,7 +14,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -21,33 +21,30 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Place
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
+import androidx.compose.material3.SliderState
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -56,8 +53,8 @@ import com.stellan.challang.data.model.drink.Drink
 import com.stellan.challang.ui.component.StarRatingDecimal
 import com.stellan.challang.ui.theme.PaperlogyFamily
 import com.stellan.challang.ui.util.formatAbv
-import kotlin.math.roundToInt
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DrinkDetailScreen(
     drink: Drink,
@@ -198,54 +195,59 @@ fun DrinkDetailScreen(
 
         item {
             val degree = drink.maxAbv.toFloat()
-            val valueRange = 0f..60f
+            val label = "${formatAbv(drink.maxAbv)}도"
 
-            var sliderWidthPx by remember { mutableIntStateOf(0) }
-            val thumbRadiusPx = with(LocalDensity.current) { 10.dp.toPx() }
-
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .height(60.dp)
-                    .onGloballyPositioned { coords ->
-                        sliderWidthPx = coords.size.width
-                    }
-            ) {
-                Slider(
+            val sliderState = remember {
+                SliderState(
                     value = degree,
-                    onValueChange = {},
-                    valueRange = valueRange,
-                    enabled = false,
-                    colors = SliderDefaults.colors(
-                        disabledActiveTrackColor = Color(0xFF6CD0D8),
-                        disabledInactiveTrackColor = Color(0xFFCEEFF2),
-                        disabledThumbColor = Color.Black
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 30.dp)
-                )
-
-                val horizontalPaddingPx = with(LocalDensity.current) { 30.dp.toPx() }
-                val trackWidthPx = sliderWidthPx - horizontalPaddingPx * 2f
-                val fraction = (degree - valueRange.start) /
-                        (valueRange.endInclusive - valueRange.start)
-                val xOffsetPx = horizontalPaddingPx + (trackWidthPx - thumbRadiusPx * 2) * fraction
-
-                Text(
-                    "${formatAbv(drink.maxAbv)}도",
-                    fontWeight = FontWeight.Normal,
-                    modifier = Modifier
-                        .offset {
-                            IntOffset(
-                                xOffsetPx.roundToInt(),
-                                50.dp.toPx().roundToInt()
-                            )
-                        }
+                    valueRange = 0f..60f
                 )
             }
+
+            val interaction = remember { MutableInteractionSource() }
+            val sliderColors = SliderDefaults.colors(
+                disabledActiveTrackColor = Color(0xFF6CD0D8),
+                disabledInactiveTrackColor = Color(0xFFCEEFF2),
+                disabledThumbColor = Color.Black
+            )
+
+            Slider(
+                state = sliderState,
+                enabled = false,
+                interactionSource = interaction,
+                colors = sliderColors,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 30.dp),
+                thumb = {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(
+                            imageVector = Icons.Filled.Place,
+                            contentDescription = null,
+                            tint = Color.Black,
+                            modifier = Modifier.size(35.dp)
+                        )
+                        Spacer(Modifier.height(20.dp))
+                        Text(
+                            label,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 15.sp,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+                    }
+                },
+                track = {
+                    SliderDefaults.Track(
+                        sliderState = sliderState,
+                        enabled = false,
+                        colors = sliderColors,
+                        thumbTrackGapSize = 0.dp,
+                        trackInsideCornerSize = 8.dp
+                    )
+                }
+            )
             HorizontalDivider(
-                Modifier.padding(30.dp),
+                Modifier.padding(start = 30.dp, top = 10.dp, end = 30.dp, bottom = 20.dp),
                 thickness = 3.dp, color = Color(0xFFCEEFF2)
             )
         }
