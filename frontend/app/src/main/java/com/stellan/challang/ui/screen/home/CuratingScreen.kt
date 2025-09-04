@@ -71,13 +71,13 @@ import coil.compose.AsyncImage
 import com.stellan.challang.R
 import com.stellan.challang.data.api.ApiClient
 import com.stellan.challang.data.model.drink.Drink
+import com.stellan.challang.data.prefs.addRecentSearch
+import com.stellan.challang.data.prefs.hasSeenGuideFlow
+import com.stellan.challang.data.prefs.setGuideShown
 import com.stellan.challang.data.repository.DrinkRepository
-import com.stellan.challang.hasSeenGuideFlow
-import com.stellan.challang.rememberRecentSearches
-import com.stellan.challang.saveSearchQuery
-import com.stellan.challang.setGuideShown
 import com.stellan.challang.ui.theme.PaperlogyFamily
 import com.stellan.challang.ui.util.formatAbv
+import com.stellan.challang.ui.util.rememberRecentSearches
 import com.stellan.challang.ui.viewmodel.DrinkViewModel
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -116,7 +116,7 @@ fun CuratingScreen(onDetail: (drink: Drink) -> Unit) {
                         query = text,
                         onQueryChange = { text = it },
                         onSearch = {
-                            scope.launch { saveSearchQuery(context, text) }
+                            scope.launch { context.addRecentSearch(text) }
                             expanded = false
                         },
                         expanded = expanded,
