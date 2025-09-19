@@ -1,7 +1,6 @@
 package com.stellan.challang.data.api
 
 import com.stellan.challang.data.model.auth.TokenAuthenticator
-import com.stellan.challang.data.model.auth.TokenProvider
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -11,20 +10,14 @@ object ApiClient {
 
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
+        redactHeader("Authorization")
     }
 
     private val client: OkHttpClient by lazy {
-        val tokenManager = TokenProvider.get()
-
         OkHttpClient.Builder()
-            .authenticator(TokenAuthenticator(tokenManager)) // 🔁 자동 토큰 갱신
+            .addInterceptor(AuthInterceptor())
+            .authenticator(TokenAuthenticator())
             .addInterceptor(loggingInterceptor)
-            .addInterceptor { chain ->
-                val request = chain.request().newBuilder()
-                    .addHeader("Authorization", "Bearer ${tokenManager.getAccessToken() ?: ""}")
-                    .build()
-                chain.proceed(request)
-            }
             .build()
     }
 

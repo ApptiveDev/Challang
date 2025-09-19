@@ -1,22 +1,14 @@
 package com.stellan.challang.data.repository
 
 import android.content.Context
-import android.util.Log
-import com.kakao.sdk.user.UserApiClient
 import com.stellan.challang.data.api.ApiClient
-import com.stellan.challang.data.model.auth.KakaoSigninRequest
-import com.stellan.challang.data.model.auth.KakaoSignupRequest
-import com.stellan.challang.data.model.auth.TokenProvider
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlin.coroutines.resume
-import com.stellan.challang.data.model.auth.WithdrawReasonRequest
-import com.stellan.challang.data.model.auth.TokenPairResponse
+import com.stellan.challang.data.model.auth.TokenStore
 
 class AuthRepository(private val context: Context) {
     private val apiService = ApiClient.api
 
-    fun clearTokens() {
-        TokenProvider.clearTokens()
+    suspend fun clearTokens() {
+        TokenStore.clearTokens()
     }
 
 

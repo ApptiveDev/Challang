@@ -3,13 +3,11 @@ package com.stellan.challang.ui.navigation
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.stellan.challang.ui.screen.home.MainScreen
-import com.stellan.challang.util.TokenManager
 import com.stellan.challang.ui.viewmodel.AuthViewModel
 import com.stellan.challang.ui.viewmodel.AuthViewModelFactory
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -25,7 +23,6 @@ fun AppNavHost(
     authViewModel: AuthViewModel = viewModel(factory = AuthViewModelFactory(ApiClient.api))
 ) {
     val context = LocalContext.current
-    val tokenManager = remember { TokenManager(context) }
 
     val isLoggedIn by authViewModel.isLoggedIn.collectAsState()
 
