@@ -54,11 +54,12 @@ import androidx.compose.foundation.verticalScroll
 import com.stellan.challang.ui.viewmodel.TagViewModel
 import com.stellan.challang.data.api.ApiClient
 import  com.stellan.challang.data.repository.TagRepository
-import com.stellan.challang.data.model.auth.TokenProvider
 import com.stellan.challang.data.model.preference.PreferenceRequest
 import com.stellan.challang.data.repository.PreferenceRepository
 import android.util.Log
+import com.stellan.challang.data.model.auth.TokenStore
 import com.stellan.challang.ui.viewmodel.PreferenceViewModel
+import kotlinx.coroutines.launch
 
 //@Composable
 //fun ProfileSettingScreen(
@@ -166,6 +167,8 @@ fun ProfileSettingScreen(
     var selectedTagIds by remember { mutableStateOf<List<Int>>(emptyList()) }
     var step by remember { mutableIntStateOf(1) }
 
+    val scope = rememberCoroutineScope()
+
     when (step) {
         1 -> ProfileStepOne(
             onNext = { step = 2 },
@@ -185,13 +188,15 @@ fun ProfileSettingScreen(
 
         4 -> ProfileStepFour(
             onNext = {
-                val token = TokenProvider.getRefreshToken() ?: return@ProfileStepFour
-                val request = PreferenceRequest(
-                    typeIds = selectedTypeIds,
-                    levelId = selectedLevelId ?: 0,
-                    tagIds = selectedTagIds
-                )
-                preferenceViewModel.submitPreference("Bearer $token", request)
+                scope.launch {
+                    val token = TokenStore.getRefreshToken() ?: return@launch
+                    val request = PreferenceRequest(
+                        typeIds = selectedTypeIds,
+                        levelId = selectedLevelId ?: 0,
+                        tagIds = selectedTagIds
+                    )
+                    preferenceViewModel.submitPreference("Bearer $token", request)
+                }
             }
         )
     }
@@ -509,7 +514,7 @@ fun ProfileStepThree(
     val isSelectionEnough = selectedOptions.size >= 5
 
     LaunchedEffect(Unit) {
-        val token = TokenProvider.getRefreshToken()
+        val token = TokenStore.getRefreshToken()
         if (!token.isNullOrBlank()) {
             viewModel.fetchTags("Bearer $token")
         }

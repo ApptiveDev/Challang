@@ -19,12 +19,12 @@ class AuthViewModel(
 
     private suspend fun <T> safeApiCall(
         apiCall: suspend () -> Response<T>,
-        onUnauthorized: () -> Unit
+        onUnauthorized: suspend () -> Unit
     ): Response<T>? {
         return try {
             val response = apiCall()
             if (response.code() == 401) {
-                TokenProvider.clearTokens()
+                TokenStore.clearTokens()
                 _isLoggedIn.value = false
                 onUnauthorized()
                 null
@@ -66,8 +66,8 @@ class AuthViewModel(
                     200 -> {
                         val tokens = response.body()?.result
                         if (tokens != null) {
-                            TokenProvider.setAccessToken(tokens.accessToken)
-                            TokenProvider.setRefreshToken(tokens.refreshToken)
+                            TokenStore.saveAccessToken(tokens.accessToken)
+                            TokenStore.saveRefreshToken(tokens.refreshToken)
                             _isLoggedIn.value = true
                             val result = response.body()?.result
                             if (result != null) {
@@ -132,8 +132,8 @@ class AuthViewModel(
                         if (signinResponse.isSuccessful && signinResponse.body()?.isSuccess == true) {
                             val tokens = signinResponse.body()?.result
                             if (tokens != null) {
-                                TokenProvider.setAccessToken(tokens.accessToken)
-                                TokenProvider.setRefreshToken(tokens.refreshToken)
+                                TokenStore.saveAccessToken(tokens.accessToken)
+                                TokenStore.saveRefreshToken(tokens.refreshToken)
                                 onSuccess(true)
                             } else {
                                 onError("로그인 토큰 응답이 비어 있어요")
@@ -163,19 +163,19 @@ class AuthViewModel(
 
 
     suspend fun logout(): Boolean {
-        val refreshToken = TokenProvider.get().getRefreshToken() ?: return false
-        val accessToken = TokenProvider.get().getAccessToken() ?: return false
+        val refreshToken = TokenStore.getRefreshToken() ?: return false
+        val accessToken = TokenStore.getAccessToken() ?: return false
         return try {
             val response = safeApiCall(
                 apiCall = { apiService.logout(refreshToken, "Bearer $refreshToken") },
                 onUnauthorized = {
-                    TokenProvider.clearTokens()
+                    TokenStore.clearTokens()
                     _isLoggedIn.value = false
                 }
             ) ?: return false
 
             if (response.isSuccessful && response.body()?.isSuccess == true) {
-                TokenProvider.clearTokens()
+                TokenStore.clearTokens()
                 _isLoggedIn.value = false
                 true
             } else {
@@ -193,8 +193,8 @@ class AuthViewModel(
         onUnauthorized: (() -> Unit)? = null
     ) {
         viewModelScope.launch {
-            val accessToken = TokenProvider.get().getAccessToken()
-            val refreshToken = TokenProvider.get().getRefreshToken()
+            val accessToken = TokenStore.getAccessToken()
+            val refreshToken = TokenStore.getRefreshToken()
 
             if (accessToken == null || refreshToken == null) {
                 onError("토큰이 없습니다")
@@ -212,14 +212,14 @@ class AuthViewModel(
                         )
                     },
                     onUnauthorized = {
-                        TokenProvider.clearTokens()
+                        TokenStore.clearTokens()
                         _isLoggedIn.value = false
                         onUnauthorized?.invoke()
                     }
                 ) ?: return@launch
 
                 if (response.isSuccessful && response.body()?.isSuccess == true) {
-                    TokenProvider.clearTokens()
+                    TokenStore.clearTokens()
                     _isLoggedIn.value = false
                     onSuccess()
                 } else {
@@ -232,6 +232,4 @@ class AuthViewModel(
             }
         }
     }
-
-
 }

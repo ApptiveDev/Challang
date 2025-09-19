@@ -2,9 +2,8 @@ package com.stellan.challang.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.stellan.challang.data.model.auth.TokenProvider
+import com.stellan.challang.data.model.auth.TokenStore
 import com.stellan.challang.data.model.drink.Drink
-import com.stellan.challang.data.model.drink.DrinkResponse
 import com.stellan.challang.data.repository.DrinkRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -32,7 +31,7 @@ class DrinkViewModel(
     fun fetchDrinks() {
         viewModelScope.launch {
             try {
-                val refreshToken = TokenProvider.getRefreshToken() ?: return@launch
+                val refreshToken = TokenStore.getRefreshToken() ?: return@launch
                 val response = repository.getRecommendedDrinks("Bearer $refreshToken")
                 _drinks.value = response;
             } catch (e: Exception) {

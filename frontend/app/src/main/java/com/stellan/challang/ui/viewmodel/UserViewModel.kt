@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.stellan.challang.data.model.user.UserInfo
 import com.stellan.challang.data.model.user.ActivityCount
 import com.stellan.challang.data.repository.UserRepository
-import com.stellan.challang.data.model.auth.TokenProvider
+import com.stellan.challang.data.model.auth.TokenStore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -23,8 +23,8 @@ class UserViewModel(
     fun fetchUserInfo() {
         viewModelScope.launch {
             try {
-                val refreshToken = TokenProvider.getRefreshToken() ?: return@launch  // ✅ Refresh token 사용
-                val response = repository.getMyInfo("Bearer $refreshToken")           // ✅ 여기에 넣기
+                val refreshToken = TokenStore.getRefreshToken() ?: return@launch
+                val response = repository.getMyInfo("Bearer $refreshToken")
                 if (response.isSuccessful) {
                     _userInfo.value = response.body()?.result
                 } else {
@@ -39,7 +39,7 @@ class UserViewModel(
 fun fetchActivityCounts() {
     viewModelScope.launch {
         try {
-            val refreshToken = TokenProvider.getRefreshToken() ?: return@launch
+            val refreshToken = TokenStore.getRefreshToken() ?: return@launch
             val response = repository.getActivityCounts("Bearer $refreshToken")
 
             if (response.isSuccessful) {
